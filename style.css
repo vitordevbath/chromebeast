@@ -1,0 +1,114 @@
+/* --- CHROMEBEAST GOTHIC NEON v8.0 --- */
+/* Pirata One: Gótico legível | Cinzel: Luxo Romano | JetBrains: Cyber Mono | UnifrakturMaguntia: Gótico Clássico */
+@import url('https://fonts.googleapis.com/css2?family=Pirata+One&family=Cinzel:wght@400;700;900&family=JetBrains+Mono:wght@100;400;800&family=UnifrakturMaguntia&display=swap');
+
+:root {
+    --cyber-neon: #00f2ff;
+    --cyber-pink: #ff0055;
+    --gothic-silver: #ffffff;
+    --chrome-dark: #000;
+    --font-main: 'Pirata One', cursive;
+    --font-sub: 'Cinzel', serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    --font-gothic-classic: 'UnifrakturMaguntia', serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+body { background: #000; color: #fff; font-family: var(--font-mono); overflow-x: hidden; }
+
+/* ESTILO PARA CRÉDITOS (AQUELE DIFÍCIL DE LER MAS FODA) */
+.bat-credits {
+    font-family: var(--font-gothic-classic);
+    font-size: 1.8rem;
+    color: var(--cyber-neon);
+    text-shadow: 0 0 5px var(--cyber-neon);
+    opacity: 0.8;
+}
+
+/* GLITCH MENOR E RÁPIDO */
+#glitch-trigger { 
+    position: fixed; 
+    inset: 0; 
+    background: var(--cyber-neon); 
+    z-index: 10000; 
+    display: none; 
+}
+.glitch-active #glitch-trigger { 
+    display: block; 
+    animation: mini-glitch 0.08s infinite; 
+}
+@keyframes mini-glitch { 
+    0% { opacity: 0.3; clip-path: inset(45% 0 45% 0); transform: translateX(-2px); }
+    50% { opacity: 0.5; clip-path: inset(10% 0 85% 0); background: var(--cyber-pink); transform: translateX(2px); }
+    100% { opacity: 0.3; clip-path: inset(80% 0 5% 0); transform: translateX(0); }
+}
+.hybrid-nav {
+    position: fixed; top: 0; width: 100%; padding: 20px 50px;
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(0,0,0,0.9); backdrop-filter: blur(15px);
+    z-index: 5000; border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.nav-logo { font-family: var(--font-main); font-size: 2.5rem; color: #fff; text-decoration: none; letter-spacing: 3px; }
+.nav-links a { color: #fff; text-decoration: none; margin-left: 25px; font-size: 0.7rem; letter-spacing: 3px; font-weight: 800; }
+.github-link { color: var(--cyber-neon) !important; border: 1px solid var(--cyber-neon); padding: 5px 15px; border-radius: 5px; }
+
+/* HOME: GÓTICO NEON ACESSÍVEL */
+.gothic-neon-section {
+    height: 100vh; background: radial-gradient(circle at center, #0a0a0a 0%, #000 100%);
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+}
+.chrome-title {
+    font-family: var(--font-main); font-size: 9rem;
+    background: linear-gradient(180deg, #fff 0%, #888 50%, #fff 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    text-transform: uppercase;
+}
+.neon-glow {
+    filter: drop-shadow(0 0 10px var(--cyber-neon)) drop-shadow(0 0 20px var(--cyber-neon));
+}
+.subtitle { font-family: var(--font-sub); letter-spacing: 12px; color: #666; font-size: 0.9rem; margin-top: -15px; font-weight: 700; }
+
+/* BOTÕES */
+.gothic-neon-btn {
+    background: transparent; border: 1px solid var(--gothic-silver);
+    color: #fff; padding: 18px 45px; cursor: pointer;
+    font-family: var(--font-mono); font-weight: 800;
+    letter-spacing: 5px; box-shadow: 0 0 15px var(--cyber-neon);
+    transition: 0.3s;
+}
+.gothic-neon-btn:hover { background: #fff; color: #000; box-shadow: 0 0 30px var(--cyber-neon); }
+
+/* CATÁLOGO DE JOGOS */
+.game-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; width: 85%; max-width: 1200px; }
+.game-card { background: #080808; border: 1px solid #1a1a1a; transition: 0.4s; position: relative; overflow: hidden; }
+.game-card:hover { border-color: var(--cyber-neon); transform: translateY(-10px); }
+.card-tag { position: absolute; top: 10px; right: 10px; font-size: 0.6rem; background: var(--cyber-neon); color: #000; padding: 3px 8px; font-weight: 800; }
+.card-image { height: 180px; background: #111; border-bottom: 1px solid #1a1a1a; }
+.card-image.main-game { background: linear-gradient(45deg, #000, #0044ff); }
+.card-info { padding: 25px; text-align: center; }
+.card-info h3 { font-family: var(--font-main); font-size: 2.2rem; margin-bottom: 10px; text-transform: uppercase; }
+.card-info p { font-family: var(--font-sub); font-size: 0.8rem; color: #555; margin-bottom: 20px; font-weight: 700; }
+.play-btn { background: transparent; border: 1px solid #fff; color: #fff; padding: 12px; cursor: pointer; transition: 0.3s; width: 100%; font-weight: 800; }
+.play-btn:hover { background: #fff; color: #000; }
+
+/* ÁREA DO PLAYER */
+.player-header { width: 85%; display: flex; justify-content: space-between; margin-bottom: 20px; align-items: center; }
+.back-btn { background: none; border: 1px solid var(--cyber-neon); color: var(--cyber-neon); cursor: pointer; padding: 8px 20px; font-weight: 800; }
+
+/* ANOMALY FORM */
+.gothic-title { font-family: var(--font-main); font-size: 6rem; background: linear-gradient(#fff, #888); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-transform: uppercase; }
+.anomaly-card { width: 500px; padding: 40px; border: 1px solid #1a1a1a; background: rgba(255,255,255,0.01); }
+.gothic-btn { background: #fff; color: #000; padding: 15px; border: none; font-family: var(--font-sub); font-size: 1.2rem; cursor: pointer; font-weight: 900; width: 100%; }
+
+/* AUXILIARES */
+.hidden { display: none !important; }
+.fade-out { opacity: 0; transition: 1s; }
+#splash-container { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; justify-content: center; align-items: center; }
+#intro-video { width: 100%; height: 100%; object-fit: cover; }
+#glitch-trigger { position: fixed; inset: 0; background: var(--cyber-neon); z-index: 10000; display: none; }
+.glitch-active #glitch-trigger { display: block; animation: glitch 0.1s infinite; }
+@keyframes glitch { 50% { opacity: 0.5; background: var(--cyber-pink); } }
+section { height: 100vh; width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; border-bottom: 1px solid #111; }
+.cyber-section { background: #050505; }
+.gothic-section { background: #000; }
+input, textarea { width: 100%; background: #080808; border: 1px solid #222; color: #fff; padding: 15px; margin-bottom: 15px; font-family: var(--font-mono); }

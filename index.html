@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHROMEBEAST | Gothic Neon Hub</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="glitch-trigger"></div>
+
+    <!-- Intro Splash -->
+    <div id="splash-container">
+        <video id="intro-video">
+            <source src="assets/intro.mp4" type="video/mp4">
+        </video>
+        <button id="start-btn" class="gothic-neon-btn" style="position: absolute; z-index: 10000;">AUTHORIZE_CHROMEBEAST</button>
+    </div>
+
+    <!-- Navegação Superior -->
+    <nav class="hybrid-nav hidden">
+        <a href="#home" class="nav-logo">CHROMEBEAST</a>
+        <div class="nav-links">
+            <a href="#home">HOME</a>
+            <a href="#catalog">CATÁLOGO</a>
+            <a href="#anomaly">REPORT_BUG</a>
+            <a href="https://github.com/SEU_USUARIO" target="_blank" class="github-link">GITHUB</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main-content" class="hidden">
+        
+        <!-- SEÇÃO 1: HOME (Gótico Neon) -->
+        <section id="home" class="gothic-neon-section">
+            <h1 class="chrome-title neon-glow">CHROMEBEAST</h1>
+            <p class="subtitle">PERSONAL PROJECT DEVELOPER</p>
+            <!-- Crédito em fonte gótica rebuscada -->
+            <div class="bat-credits" style="margin-top: 20px;">developed by bat</div>
+            <div style="margin-top: 50px;">
+                <a href="#catalog" class="gothic-neon-btn" style="text-decoration: none;">EXECUTE_SYSTEM</a>
+            </div>
+        </section>
+
+        <!-- SEÇÃO 2: CATALOG (Catálogo de Jogos) -->
+        <section id="catalog" class="cyber-section">
+            <h2 class="cyber-title" style="font-size: 3rem; margin-bottom: 40px;">GAME_CATALOG</h2>
+            
+            <div class="game-grid">
+                <!-- JOGO PRINCIPAL (O SEU) -->
+                <div class="game-card featured">
+                    <div class="card-tag">DESENVOLVIDO_POR_BAT</div>
+                    <div class="card-image main-game"></div>
+                    <div class="card-info">
+                        <h3>SPACE CONQUEST</h3>
+                        <p>O épico principal de conquista espacial.</p>
+                        <button class="play-btn" onclick="loadGame('game/index.html')">JOGAR_AGORA</button>
+                    </div>
+                </div>
+
+                <!-- OUTROS JOGOS -->
+                <div class="game-card">
+                    <div class="card-image placeholder-img"></div>
+                    <div class="card-info">
+                        <h3>NEON_STRIKE</h3>
+                        <p>Construct 3 Library #01</p>
+                        <button class="play-btn">EM_BREVE</button>
+                    </div>
+                </div>
+
+                <div class="game-card">
+                    <div class="card-image placeholder-img"></div>
+                    <div class="card-info">
+                        <h3>CYBER_SOULS</h3>
+                        <p>Construct 3 Library #02</p>
+                        <button class="play-btn">EM_BREVE</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEÇÃO 3: PROTOCOL (Área do Player) -->
+        <section id="protocol" class="cyber-section hidden">
+            <div class="player-header">
+                <button onclick="closeGame()" class="back-btn">⬅ VOLTAR_AO_CATALOGO</button>
+                <h3 id="current-game-title">EXECUTANDO_PROTOCOLO</h3>
+            </div>
+            <div class="game-vault">
+                <iframe id="game-frame" src="" frameborder="0" style="width:100%; height:100%;"></iframe>
+            </div>
+        </section>
+
+        <!-- SEÇÃO 4: ANOMALY (Bug Report Gótico) -->
+        <section id="anomaly" class="gothic-section">
+            <h2 class="gothic-title" style="font-size: 5rem;">Report Anomaly</h2>
+            <div class="anomaly-card">
+                <form id="bug-form">
+                    <input type="text" id="bug-title" placeholder="SYSTEM_SECTOR" required>
+                    <textarea id="bug-desc" placeholder="DESCRIBE_THE_ERROR" rows="4" required></textarea>
+                    <button type="submit" class="gothic-btn" style="width: 100%;">Send Protocol</button>
+                </form>
+                <div id="form-msg" style="margin-top: 20px; text-align: center;"></div>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
