@@ -42,11 +42,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 800);
         }, 200);
     }
-    // CONFIGURAÇÃO DE ENDEREÇO DA API
-    // Se estiver rodando local, usa localhost. Se estiver hospedado, substitua pela URL do seu Ngrok ou Servidor Nuvem.
+    // CONFIGURAÇÃO DE ENDEREÇO DA API (REDE GLOBAL)
     const API_BASE_URL = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" 
         ? "http://localhost:3000" 
-        : "SUA_URL_DO_NGROK_AQUI"; // <--- COLOQUE A URL DO NGROK AQUI
+        : "https://SUA_URL_DO_NGROK.ngrok-free.app"; // <--- COLOQUE SEU LINK DO NGROK AQUI
 
     // 2. CONTACT FORM Logic
     const contactForm = document.getElementById('contact-form');
@@ -68,6 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const response = await fetch(`${API_BASE_URL}/api/contact`, {
                     method: 'POST',
+                    mode: 'cors', // Força o modo CORS para evitar erros de segurança
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });

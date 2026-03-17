@@ -6,36 +6,55 @@ const path = require('path');
 const app = express();
 const PORT = 3000;
 
-app.use(cors());
+// Configuração de CORS para permitir que o Vercel acesse seu PC
+app.use(cors({
+    origin: '*', // Permite qualquer origem (ideal para teste com Vercel + Local)
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type']
+}));
 app.use(express.json());
 
-// Rota para Reportar Bug
-app.post('/api/bugs', (req, res) => {
-    const { title, description, timestamp } = req.body;
-    const bugReport = { title, description, timestamp, id: Date.now() };
+// Ensure data directory exists
+const dataDir = path.join(__dirname, 'data');
+if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir);
+}
 
-    const filePath = path.join(__dirname, 'data', 'bugs.json');
+// Route for Contact Form
+app.post('/api/contact', (req, res) => {
+    const { name, email, message, timestamp } = req.body;
+    const contactMessage = { name, email, message, timestamp, id: Date.now() };
+
+    const filePath = path.join(dataDir, 'contact_messages.json');
     
     fs.readFile(filePath, 'utf8', (err, data) => {
-        let bugs = [];
+        let messages = [];
         if (!err && data) {
-            bugs = JSON.parse(data);
+            try {
+                messages = JSON.parse(data);
+            } catch (parseErr) {
+                console.error('Error parsing JSON:', parseErr);
+                messages = [];
+            }
         }
-        bugs.push(bugReport);
+        messages.push(contactMessage);
         
-        fs.writeFile(filePath, JSON.stringify(bugs, null, 2), (err) => {
-            if (err) return res.status(500).send('Erro ao salvar bug.');
-            res.status(201).send({ message: 'Bug reportado.' });
+        fs.writeFile(filePath, JSON.stringify(messages, null, 2), (err) => {
+            if (err) {
+                console.error('Error writing file:', err);
+                return res.status(500).send('Error saving contact signal.');
+            }
+            res.status(201).send({ message: 'Signal received.' });
         });
     });
 });
 
-// Rota para fechar o servidor
+// Route to shutdown server
 app.get('/api/shutdown', (req, res) => {
-    res.send('Fechando servidor...');
+    res.send('Shutting down server...');
     process.exit();
 });
 
 app.listen(PORT, () => {
-    console.log(`Servidor rodando na porta ${PORT}`);
+    console.log(`[CHROMEBEAST] Server active on port ${PORT}`);
 });

@@ -13,8 +13,8 @@ Write-Host "==========================================" -ForegroundColor Cyan
 Write-Host "   CHROMEBEAST - CLOUD INSTALLER V2.0" -ForegroundColor White
 Write-Host "==========================================" -ForegroundColor Cyan
 
-# 2. DEFINIR URL DO GITHUB (COLOQUE O LINK DO SEU REPOSITÓRIO AQUI)
-$repoUrl = "https://github.com/SEU_USUARIO/NOME_DO_REPO/archive/refs/heads/main.zip"
+# 2. DEFINIR URL DO GITHUB
+$repoUrl = "https://github.com/vitordevbath/chromebeast/archive/refs/heads/main.zip"
 $destination = "C:\ChromeBeast_Presentation"
 
 # 3. BAIXAR DIRETO DA NUVEM
