@@ -24,51 +24,24 @@
 
 body { background: #000; color: #fff; font-family: var(--font-mono); overflow-x: hidden; }
 
+/* EFEITO CRT SCANLINES */
+body::after {
+    content: " ";
+    display: block;
+    position: fixed;
+    top: 0; left: 0; bottom: 0; right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.04));
+    z-index: 999999;
+    background-size: 100% 3px, 5px 100%;
+    pointer-events: none;
+    opacity: 0.5;
+}
+
 .container { width: 90%; max-width: 1200px; margin: 0 auto; }
 
-/* Glassmorphism Card */
-.glass-card {
-    background: var(--glass-bg);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--glass-border);
-    border-radius: 15px;
-    padding: 30px;
-    transition: 0.4s ease;
-}
-.glass-card:hover { border-color: var(--cyber-neon); box-shadow: 0 0 20px rgba(0, 242, 255, 0.2); }
-
-/* Navegação */
-.hybrid-nav {
-    position: fixed; top: 0; width: 100%; padding: 15px 50px;
-    display: flex; justify-content: space-between; align-items: center;
-    background: rgba(0,0,0,0.8); backdrop-filter: blur(20px);
-    z-index: 5000; border-bottom: 1px solid var(--glass-border);
-}
-.nav-logo { font-family: var(--font-main); font-size: 2.2rem; color: #fff; text-decoration: none; letter-spacing: 2px; }
-.nav-links a { color: rgba(255,255,255,0.7); text-decoration: none; margin-left: 20px; font-size: 0.75rem; letter-spacing: 2px; font-weight: 800; transition: 0.3s; }
-.nav-links a:hover { color: var(--cyber-neon); text-shadow: 0 0 10px var(--cyber-neon); }
-.github-link { color: var(--cyber-neon) !important; border: 1px solid var(--cyber-neon); padding: 6px 18px; border-radius: 4px; }
-
-/* Home Section */
-.hero-content { text-align: center; animation: fadeIn 1.5s ease-out; }
-.chrome-title {
-    font-family: var(--font-main); font-size: clamp(4rem, 15vw, 10rem);
-    background: linear-gradient(180deg, #fff 0%, #888 50%, #fff 100%);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    text-transform: uppercase; line-height: 0.9;
-}
-.subtitle { font-family: var(--font-sub); letter-spacing: 8px; color: #888; font-size: clamp(0.6rem, 2vw, 1rem); margin-top: 10px; font-weight: 700; }
-
-/* About Section */
-.cyber-title, .gothic-title { 
-    font-family: var(--font-main); font-size: clamp(3rem, 10vw, 5rem); 
-    margin-bottom: 40px; text-align: center; 
-    background: linear-gradient(#fff, #555); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-}
-.about-grid { display: flex; justify-content: center; }
-.bio-card { max-width: 800px; text-align: center; }
-.bio-card h3 { font-family: var(--font-sub); margin-bottom: 20px; color: var(--cyber-neon); letter-spacing: 3px; }
-.bio-card p { font-size: 1.1rem; line-height: 1.6; color: #ccc; margin-bottom: 30px; }
+/* Texto de corpo com melhor legibilidade */
+.bio-card p { font-family: var(--font-mono); font-size: 0.95rem; line-height: 1.6; color: #ccc; margin-bottom: 30px; }
 .skills-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
 .skill-tag { background: rgba(0, 242, 255, 0.1); border: 1px solid var(--cyber-neon); color: var(--cyber-neon); padding: 5px 15px; font-size: 0.7rem; font-weight: 800; border-radius: 3px; }
 

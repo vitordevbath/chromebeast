@@ -23,8 +23,12 @@ if (!fs.existsSync(dataDir)) {
 // Route for Contact Form
 app.post('/api/contact', (req, res) => {
     const { name, email, message, timestamp } = req.body;
-    const contactMessage = { name, email, message, timestamp, id: Date.now() };
+    
+    if (!name || !email || !message) {
+        return res.status(400).send({ error: "MISSING_DATA_PACKAGE" });
+    }
 
+    const contactMessage = { name, email, message, timestamp, id: Date.now() };
     const filePath = path.join(dataDir, 'contact_messages.json');
     
     fs.readFile(filePath, 'utf8', (err, data) => {
@@ -33,7 +37,6 @@ app.post('/api/contact', (req, res) => {
             try {
                 messages = JSON.parse(data);
             } catch (parseErr) {
-                console.error('Error parsing JSON:', parseErr);
                 messages = [];
             }
         }
@@ -41,20 +44,16 @@ app.post('/api/contact', (req, res) => {
         
         fs.writeFile(filePath, JSON.stringify(messages, null, 2), (err) => {
             if (err) {
-                console.error('Error writing file:', err);
-                return res.status(500).send('Error saving contact signal.');
+                return res.status(500).send({ error: "STORAGE_FAILURE" });
             }
+            console.log(`[SIGNAL] Message received from: ${name}`);
             res.status(201).send({ message: 'Signal received.' });
         });
     });
 });
 
-// Route to shutdown server
-app.get('/api/shutdown', (req, res) => {
-    res.send('Shutting down server...');
-    process.exit();
-});
-
 app.listen(PORT, () => {
-    console.log(`[CHROMEBEAST] Server active on port ${PORT}`);
+    console.log(`==========================================`);
+    console.log(`[CHROMEBEAST] CORE ACTIVE ON PORT ${PORT}`);
+    console.log(`==========================================`);
 });
