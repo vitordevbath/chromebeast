@@ -7,14 +7,26 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Cursor Customizado -->
+    <div id="custom-cursor"></div>
+    <div id="cursor-blur"></div>
+
+    <!-- Áudios (Caminhos Corrigidos) -->
+    <audio id="bg-music" loop><source src="../assets/ambient.mp3" type="audio/mp3"></audio>
+    <audio id="click-sound"><source src="../assets/click.mp3" type="audio/mp3"></audio>
+
     <div id="glitch-trigger"></div>
 
     <!-- Intro Splash -->
     <div id="splash-container">
-        <video id="intro-video">
-            <source src="assets/intro.mp4" type="video/mp4">
+        <video id="intro-video" playsinline>
+            <source src="../assets/intro.mp4" type="video/mp4">
         </video>
-        <button id="start-btn" class="gothic-neon-btn" style="position: absolute; z-index: 10000;">AUTHORIZE_CHROMEBEAST</button>
+        
+        <!-- Terminal de Logs -->
+        <div id="terminal-logs"></div>
+
+        <button id="start-btn" class="gothic-neon-btn" style="position: absolute; z-index: 10000;">REQUEST_YOUR_SOUL</button>
         <button id="skip-btn" class="gothic-neon-btn hidden" style="position: absolute; bottom: 50px; right: 50px; z-index: 10001; font-size: 0.6rem; padding: 10px 20px;">SKIP_SEQUENCE [ESC]</button>
     </div>
 
@@ -33,79 +45,57 @@
     <!-- Main Content -->
     <main id="main-content" class="hidden">
         
-        <!-- SEÇÃO 1: HOME (Gótico Neon) -->
+        <!-- SEÇÃO 1: HOME -->
         <section id="home" class="gothic-neon-section">
             <div class="hero-content">
-                <h1 class="chrome-title neon-glow">CHROMEBEAST</h1>
+                <h1 class="chrome-title">CHROMEBEAST</h1>
                 <p class="subtitle">PREMIUM GAME DEVELOPMENT PROTOCOL</p>
-                <div class="bat-credits" style="margin-top: 20px;">developed by bat_sys</div>
                 <div style="margin-top: 50px;">
                     <a href="#about" class="gothic-neon-btn" style="text-decoration: none;">INITIALIZE_CORE</a>
                 </div>
             </div>
         </section>
 
-        <!-- SEÇÃO 2: QUEM SOU (About Me) -->
+        <!-- SEÇÃO 2: QUEM SOU -->
         <section id="about" class="cyber-section">
             <div class="container">
-                <h2 class="cyber-title">SYSTEM_OPERATOR</h2>
-                <div class="about-grid">
-                    <div class="glass-card bio-card">
-                        <h3>IDENTITY_PROFILE</h3>
-                        <p>Senior Developer specializing in Cyber-Gothic aesthetics and high-performance gaming architectures. Expert in bridging the gap between dark artistic vision and robust technical implementation.</p>
-                        <div class="skills-list">
-                            <span class="skill-tag">HTML5/CSS3</span>
-                            <span class="skill-tag">JS_VANILLA_ES6+</span>
-                            <span class="skill-tag">NODE_JS/EXPRESS</span>
-                            <span class="skill-tag">CONSTRUCT_3</span>
-                            <span class="skill-tag">GOTHIC_UX</span>
-                        </div>
-                    </div>
+                <h2 class="chrome-title" style="font-size: 4rem; margin-bottom: 40px;">SYSTEM_OPERATOR</h2>
+                <div class="glass-card">
+                    <p style="font-size: 1.2rem; line-height: 1.8; color: #ccc; text-align: center;">
+                        Senior Developer specializing in Cyber-Gothic aesthetics and high-performance gaming architectures. 
+                        Expert in bridging the gap between dark artistic vision and robust technical implementation.
+                    </p>
                 </div>
             </div>
         </section>
 
-        <!-- SEÇÃO 3: TELAS_FOTOS (Gallery) -->
-        <section id="gallery" class="gothic-section">
+        <!-- SEÇÃO 3: GALERIA -->
+        <section id="gallery" class="gothic-neon-section">
             <div class="container">
-                <h2 class="gothic-title">VISUAL_PROTOCOLS</h2>
-                <div class="gallery-grid">
-                    <div class="gallery-item glass-card">
-                        <div class="gallery-img placeholder-1"></div>
-                        <div class="gallery-info"><h4>SPACE_CONQUEST_V1</h4><p>Main Engine Reveal</p></div>
-                    </div>
-                    <div class="gallery-item glass-card">
-                        <div class="gallery-img placeholder-2"></div>
-                        <div class="gallery-info"><h4>NEON_DISTRICT</h4><p>Environment Design</p></div>
-                    </div>
-                    <div class="gallery-item glass-card">
-                        <div class="gallery-img placeholder-3"></div>
-                        <div class="gallery-info"><h4>GOTHIC_INTERFACE</h4><p>UX Prototype</p></div>
-                    </div>
+                <h2 class="chrome-title" style="font-size: 4rem; margin-bottom: 40px;">VISUAL_PROTOCOLS</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                    <div class="glass-card" style="height: 200px; display: flex; align-items: center; justify-content: center;">SPACE_CONQUEST_V1</div>
+                    <div class="glass-card" style="height: 200px; display: flex; align-items: center; justify-content: center;">NEON_DISTRICT</div>
+                    <div class="glass-card" style="height: 200px; display: flex; align-items: center; justify-content: center;">GOTHIC_INTERFACE</div>
                 </div>
             </div>
         </section>
 
-        <!-- SEÇÃO 4: CONTA_FORMULARIO (Contact Form) -->
+        <!-- SEÇÃO 4: CONTATO -->
         <section id="contact" class="cyber-section">
-            <h2 class="cyber-title">CONTACT_PROTOCOL</h2>
-            <div class="glass-card contact-card">
-                <form id="contact-form">
-                    <div class="form-group">
-                        <input type="text" id="contact-name" placeholder="OPERATOR_NAME" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="email" id="contact-email" placeholder="ENCRYPTED_EMAIL" required>
-                    </div>
-                    <div class="form-group">
-                        <textarea id="contact-message" placeholder="TRANSMIT_DATA_PACKAGE" rows="4" required></textarea>
-                    </div>
-                    <button type="submit" class="gothic-neon-btn" style="width: 100%;">SEND_SIGNAL</button>
-                </form>
-                <div id="form-msg" style="margin-top: 20px; text-align: center;"></div>
+            <div class="container">
+                <h2 class="chrome-title" style="font-size: 4rem; margin-bottom: 40px;">CONTACT_PROTOCOL</h2>
+                <div class="glass-card" style="max-width: 600px; margin: 0 auto;">
+                    <form id="contact-form">
+                        <input type="text" id="contact-name" placeholder="OPERATOR_NAME" style="width: 100%; padding: 15px; margin-bottom: 15px; background: rgba(0,0,0,0.5); border: 1px solid #444; color: #fff;">
+                        <input type="email" id="contact-email" placeholder="ENCRYPTED_EMAIL" style="width: 100%; padding: 15px; margin-bottom: 15px; background: rgba(0,0,0,0.5); border: 1px solid #444; color: #fff;">
+                        <textarea id="contact-message" placeholder="TRANSMIT_DATA_PACKAGE" rows="4" style="width: 100%; padding: 15px; margin-bottom: 15px; background: rgba(0,0,0,0.5); border: 1px solid #444; color: #fff;"></textarea>
+                        <button type="submit" class="gothic-neon-btn" style="width: 100%;">SEND_SIGNAL</button>
+                    </form>
+                    <div id="form-msg" style="margin-top: 20px; text-align: center;"></div>
+                </div>
             </div>
         </section>
-
     </main>
 
     <script src="script.js"></script>

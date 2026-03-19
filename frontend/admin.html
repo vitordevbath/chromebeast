@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHROMEBEAST | Admin Core</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { cursor: default; }
+        .admin-container { padding: 50px; max-width: 1200px; margin: 0 auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 30px; background: rgba(255,255,255,0.02); }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 0.8rem; }
+        th { color: var(--cyber-neon); text-transform: uppercase; letter-spacing: 2px; }
+        tr:hover { background: rgba(0, 242, 255, 0.05); }
+        .delete-btn { background: none; border: 1px solid var(--cyber-pink); color: var(--cyber-pink); cursor: pointer; padding: 5px 10px; font-size: 0.6rem; }
+        .delete-btn:hover { background: var(--cyber-pink); color: #fff; }
+    </style>
+</head>
+<body style="cursor: auto;">
+    <div class="admin-container">
+        <h1 class="chrome-title" style="font-size: 3rem;">INCOMING_SIGNALS</h1>
+        <a href="index.html" class="gothic-neon-btn" style="text-decoration: none; font-size: 0.6rem; padding: 10px 20px;">RETURN_TO_HUB</a>
+        
+        <table id="messages-table">
+            <thead>
+                <tr>
+                    <th>TIMESTAMP</th>
+                    <th>OPERATOR</th>
+                    <th>EMAIL</th>
+                    <th>DATA_PACKAGE</th>
+                    <th>ACTION</th>
+                </tr>
+            </thead>
+            <tbody id="messages-body">
+                <!-- Data will be injected here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const API_URL = "http://localhost:3000/api/messages";
+
+        async function loadMessages() {
+            const res = await fetch(API_URL);
+            const data = await res.json();
+            const body = document.getElementById('messages-body');
+            body.innerHTML = "";
+
+            data.reverse().forEach(msg => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${new Date(msg.timestamp).toLocaleString()}</td>
+                    <td>${msg.name}</td>
+                    <td>${msg.email}</td>
+                    <td>${msg.message}</td>
+                    <td><button class="delete-btn" onclick="deleteMessage(${msg.id})">PURGE</button></td>
+                `;
+                body.appendChild(tr);
+            });
+        }
+
+        async function deleteMessage(id) {
+            if (confirm("CONFIRM_PURGE_PROTOCOL?")) {
+                await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+                loadMessages();
+            }
+        }
+
+        loadMessages();
+    </script>
+</body>
+</html>

@@ -57,12 +57,34 @@ app.post('/api/contact', (req, res) => {
     });
 });
 
-// ROTA EXTRA: Ver todas as mensagens (Para o Administrador)
+// ROTA EXTRA: Ver todas as mensagens
 app.get('/api/messages', (req, res) => {
     const filePath = path.join(dataDir, 'contact_messages.json');
     fs.readFile(filePath, 'utf8', (err, data) => {
         if (err) return res.send([]);
-        res.send(JSON.parse(data));
+        try {
+            res.send(JSON.parse(data));
+        } catch (e) {
+            res.send([]);
+        }
+    });
+});
+
+// ROTA EXTRA: Deletar uma mensagem específica
+app.delete('/api/messages/:id', (req, res) => {
+    const { id } = req.params;
+    const filePath = path.join(dataDir, 'contact_messages.json');
+
+    fs.readFile(filePath, 'utf8', (err, data) => {
+        if (err) return res.status(500).send({ error: "READ_FAILURE" });
+        
+        let messages = JSON.parse(data || "[]");
+        const filteredMessages = messages.filter(m => m.id != id);
+        
+        fs.writeFile(filePath, JSON.stringify(filteredMessages, null, 2), (err) => {
+            if (err) return res.status(500).send({ error: "DELETE_FAILURE" });
+            res.send({ message: "SIGNAL_PURGED" });
+        });
     });
 });
 
