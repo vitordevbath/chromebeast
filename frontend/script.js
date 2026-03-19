@@ -52,15 +52,16 @@ document.addEventListener('DOMContentLoaded', () => {
         terminal.style.display = 'flex'; 
 
         const logMessages = [
+            " [!] CORE_SYSTEM: DEVELOPED_BY_BAT_SYS",
             ">> INITIALIZING_CHROMEBEAST_BIOS_V1.0.4",
-            ">> CPU_CHECK... [STABLE]",
+            ">> WHITE_NEON_PALETTE... [LOADED]",
+            ">> BEAR_MODULE_SYNC... [OK]",
             ">> MEMORY_DUMP_0x00FF... [OK]",
             ">> LOADING_GOTHIC_VISUAL_MODULES...",
             ">> SYNCHRONIZING_NEON_GRID... [OK]",
             ">> CONNECTING_LOCAL_DATABASE... [OK]",
-            ">> INJECTING_CYBER_GOTHIC_ASSETS...",
             ">> BOOT_SEQUENCE_COMPLETE.",
-            ">> WELCOME_OPERATOR_USER."
+            ">> WELCOME_OPERATOR."
         ];
 
         let logIndex = 0;
@@ -68,6 +69,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (logIndex < logMessages.length) {
                 const line = document.createElement('div');
                 line.className = 'log-line';
+                // Adiciona classe de destaque para a primeira linha
+                if (logIndex === 0) line.classList.add('highlight');
+                
                 line.innerText = logMessages[logIndex];
                 terminal.appendChild(line);
                 logIndex++;
