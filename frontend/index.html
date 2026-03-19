@@ -11,9 +11,9 @@
     <div id="custom-cursor"></div>
     <div id="cursor-blur"></div>
 
-    <!-- Áudios (Caminhos Corrigidos para Deploy) -->
+    <!-- Áudios -->
     <audio id="bg-music" loop><source src="assets/ambient.mp3" type="audio/mp3"></audio>
-    <audio id="click-sound"><source src="assets/click.mp3" type="audio/mp3"></audio>
+    <audio id="click-sound"><source src="assets/click.mp3" type="audio/mp4"></audio>
 
     <div id="glitch-trigger"></div>
 
@@ -22,10 +22,7 @@
         <video id="intro-video" playsinline>
             <source src="assets/intro.mp4" type="video/mp4">
         </video>
-        
-        <!-- Terminal de Logs -->
         <div id="terminal-logs"></div>
-
         <button id="start-btn" class="gothic-neon-btn" style="position: absolute; z-index: 10000;">REQUEST_YOUR_SOUL</button>
         <button id="skip-btn" class="gothic-neon-btn hidden" style="position: absolute; bottom: 50px; right: 50px; z-index: 10001; font-size: 0.6rem; padding: 10px 20px;">SKIP_SEQUENCE [ESC]</button>
     </div>
@@ -35,8 +32,9 @@
         <a href="#home" class="nav-logo">CHROMEBEAST</a>
         <div class="nav-links">
             <a href="#home">HOME</a>
+            <a href="#play" style="color: var(--cyber-neon); border: 1px solid var(--cyber-neon); padding: 5px 15px; border-radius: 4px;">PLAY_CORE</a>
             <a href="#about">QUEM_SOU</a>
-            <a href="#gallery">TELAS_FOTOS</a>
+            <a href="#gallery">VISUAL_GALLERY</a>
             <a href="#contact">CONTA_FORMULARIO</a>
             <a href="https://github.com/vitordevbath" target="_blank" class="github-link">GITHUB</a>
         </div>
@@ -51,13 +49,30 @@
                 <h1 class="chrome-title">CHROMEBEAST</h1>
                 <p class="subtitle">PREMIUM GAME DEVELOPMENT PROTOCOL</p>
                 <div style="margin-top: 50px;">
-                    <a href="#about" class="gothic-neon-btn" style="text-decoration: none;">INITIALIZE_CORE</a>
+                    <a href="#play" class="gothic-neon-btn" style="text-decoration: none;">INITIALIZE_ENGINE</a>
                 </div>
             </div>
         </section>
 
-        <!-- SEÇÃO 2: QUEM SOU -->
-        <section id="about" class="cyber-section">
+        <!-- SEÇÃO 2: PLAY_STATION (Apenas Jogos) -->
+        <section id="play" class="cyber-section">
+            <div class="container">
+                <h2 class="chrome-title" style="font-size: 4rem; margin-bottom: 40px;">PLAY_STATION</h2>
+                <div class="play-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px;">
+                    <!-- Jogo 1: Space Conquest -->
+                    <a href="game/index.html" target="_blank" class="glass-card" style="height: 350px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-decoration: none; color: inherit; border: 2px solid var(--cyber-neon); background: rgba(0, 242, 255, 0.03); transition: 0.4s;">
+                        <div style="text-align: center;">
+                            <h4 style="font-family: var(--font-main); font-size: 2.2rem; color: #fff; text-shadow: 0 0 15px var(--cyber-neon);">SPACE_CONQUEST</h4>
+                            <p style="font-size: 0.8rem; letter-spacing: 5px; color: var(--cyber-neon); margin: 20px 0;">[ OPERATE_FULL_SCREEN ]</p>
+                            <span class="gothic-neon-btn" style="font-size: 0.7rem; padding: 12px 30px;">LAUNCH_GAME</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEÇÃO 3: QUEM SOU -->
+        <section id="about" class="gothic-neon-section">
             <div class="container">
                 <h2 class="chrome-title" style="font-size: 4rem; margin-bottom: 40px;">SYSTEM_OPERATOR</h2>
                 <div class="glass-card">
@@ -69,25 +84,20 @@
             </div>
         </section>
 
-        <!-- SEÇÃO 3: GALERIA -->
-        <section id="gallery" class="gothic-neon-section">
+        <!-- SEÇÃO 4: VISUAL_GALLERY (Apenas Fotos) -->
+        <section id="gallery" class="cyber-section">
             <div class="container">
-                <h2 class="chrome-title" style="font-size: 4rem; margin-bottom: 40px;">VISUAL_PROTOCOLS</h2>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
-                    <a href="game/index.html" target="_blank" class="glass-card" style="height: 200px; display: flex; align-items: center; justify-content: center; text-decoration: none; color: inherit; transition: 0.3s; border: 1px solid var(--glass-border);">
-                        <div style="text-align: center;">
-                            <h4 style="font-family: var(--font-main); font-size: 1.5rem; color: var(--cyber-neon);">SPACE_CONQUEST_V1</h4>
-                            <p style="font-size: 0.6rem; letter-spacing: 2px; color: #888;">INITIALIZE_ENGINE</p>
-                        </div>
-                    </a>
-                    <div class="glass-card" style="height: 200px; display: flex; align-items: center; justify-content: center;">NEON_DISTRICT</div>
-                    <div class="glass-card" style="height: 200px; display: flex; align-items: center; justify-content: center;">GOTHIC_INTERFACE</div>
+                <h2 class="chrome-title" style="font-size: 4rem; margin-bottom: 40px;">VISUAL_GALLERY</h2>
+                <div class="gallery-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                    <div class="glass-card" style="height: 250px; background: url('assets/thumb1.jpg') center/cover; border: 1px solid rgba(255,255,255,0.1);"></div>
+                    <div class="glass-card" style="height: 250px; background: url('assets/thumb2.jpg') center/cover; border: 1px solid rgba(255,255,255,0.1);"></div>
+                    <div class="glass-card" style="height: 250px; background: url('assets/thumb3.jpg') center/cover; border: 1px solid rgba(255,255,255,0.1);"></div>
                 </div>
             </div>
         </section>
 
-        <!-- SEÇÃO 4: CONTATO -->
-        <section id="contact" class="cyber-section">
+        <!-- SEÇÃO 5: CONTATO -->
+        <section id="contact" class="gothic-neon-section">
             <div class="container">
                 <h2 class="chrome-title" style="font-size: 4rem; margin-bottom: 40px;">CONTACT_PROTOCOL</h2>
                 <div class="glass-card" style="max-width: 600px; margin: 0 auto;">
