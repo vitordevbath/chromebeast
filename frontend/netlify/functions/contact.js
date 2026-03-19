@@ -1,52 +1,43 @@
 const { neon } = require('@netlify/neon');
+const { drizzle } = require('drizzle-orm/neon-http');
+const { contactMessages } = require('../../db/schema');
 
 exports.handler = async (event) => {
-    // Bloqueia qualquer método que não seja POST
     if (event.httpMethod !== "POST") {
-        return { 
-            statusCode: 405, 
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ error: "METHOD_NOT_ALLOWED" }) 
-        };
+        return { statusCode: 405, body: JSON.stringify({ error: "METHOD_NOT_ALLOWED" }) };
     }
 
     try {
-        const { name, email, message, timestamp } = JSON.parse(event.body);
-        
-        // Validação básica de segurança
+        const { name, email, message } = JSON.parse(event.body);
+
+        // Validação rápida de segurança
         if (!name || !email || !message) {
-            return {
-                statusCode: 400,
-                body: JSON.stringify({ error: "INCOMPLETE_DATA_PACKAGE" })
-            };
+            return { statusCode: 400, body: JSON.stringify({ error: "INCOMPLETE_DATA_PACKAGE" }) };
         }
 
-        // O neon() sem argumentos usa automaticamente a variável NETLIFY_DATABASE_URL
+        // Conecta ao Neon (Padrão Automático Netlify DB)
         const sql = neon();
+        const db = drizzle(sql);
 
-        // Insere a mensagem no banco de dados Neon
-        await sql`
-            INSERT INTO contact_messages (name, email, message, timestamp)
-            VALUES (${name}, ${email}, ${message}, ${timestamp || new Date().toISOString()})
-        `;
+        // Insere a mensagem de contato usando Drizzle ORM
+        await db.insert(contactMessages).values({
+            name,
+            email,
+            message,
+            timestamp: new Date()
+        });
 
         return {
             statusCode: 201,
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ 
-                message: "SIGNAL_STORED_IN_NEON_CORE",
-                status: "SECURE"
-            }),
+            body: JSON.stringify({ message: "SIGNAL_STORED_VIA_DRIZZLE_CORE" }),
         };
     } catch (error) {
-        console.error('Neon Database Error:', error);
+        console.error('Drizzle Error:', error);
         return {
             statusCode: 500,
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ 
-                error: "SYSTEM_DATABASE_FAILURE", 
-                details: "Check if the 'contact_messages' table exists in Neon console." 
-            }),
+            body: JSON.stringify({ error: "DRIZZLE_CORE_FAILURE", details: error.message }),
         };
     }
 };
