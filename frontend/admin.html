@@ -37,32 +37,47 @@
         </table>
     </div>
 
+    <script src="api.js"></script>
     <script>
-        const API_URL = "http://localhost:3000/api/messages";
+        const api = window.ChromeBeastApi;
+        const body = document.getElementById('messages-body');
 
         async function loadMessages() {
-            const res = await fetch(API_URL);
-            const data = await res.json();
-            const body = document.getElementById('messages-body');
             body.innerHTML = "";
+            try {
+                const data = await api.listMessages();
+                const sortedMessages = [...data].sort((a, b) => {
+                    return new Date(b.timestamp) - new Date(a.timestamp);
+                });
 
-            data.reverse().forEach(msg => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${new Date(msg.timestamp).toLocaleString()}</td>
-                    <td>${msg.name}</td>
-                    <td>${msg.email}</td>
-                    <td>${msg.message}</td>
-                    <td><button class="delete-btn" onclick="deleteMessage(${msg.id})">PURGE</button></td>
-                `;
-                body.appendChild(tr);
-            });
+                sortedMessages.forEach(msg => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${new Date(msg.timestamp).toLocaleString()}</td>
+                        <td>${msg.name}</td>
+                        <td>${msg.email}</td>
+                        <td>${msg.message}</td>
+                        <td><button class="delete-btn" onclick="deleteMessage(${msg.id})">PURGE</button></td>
+                    `;
+                    body.appendChild(tr);
+                });
+
+                if (!sortedMessages.length) {
+                    body.innerHTML = '<tr><td colspan="5">NO_SIGNALS_CAPTURED.</td></tr>';
+                }
+            } catch (error) {
+                body.innerHTML = `<tr><td colspan="5">ERROR: ${error.message || 'ADMIN_CORE_OFFLINE'}.</td></tr>`;
+            }
         }
 
         async function deleteMessage(id) {
             if (confirm("CONFIRM_PURGE_PROTOCOL?")) {
-                await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
-                loadMessages();
+                try {
+                    await api.deleteMessage(id);
+                    loadMessages();
+                } catch (error) {
+                    body.innerHTML = `<tr><td colspan="5">ERROR: ${error.message || 'PURGE_FAILURE'}.</td></tr>`;
+                }
             }
         }
 

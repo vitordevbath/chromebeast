@@ -1,2 +1,6 @@
 [build]
-  publish = "frontend"
+  base = "frontend"
+  publish = "."
+
+[functions]
+  directory = "netlify/functions"

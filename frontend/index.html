@@ -5,25 +5,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CHROMEBEAST | Gothic Neon Hub</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Bug Report Link -->
+    <a href="mailto:vitordevbath@gmail.com" id="bug-report" class="pixel-link">REPORT_A_BUG</a>
+
+    <!-- Login Modal (Replaces Start Button) -->
+    <div id="login-modal" class="pixel-modal">
+        <div class="modal-content">
+            <h2 class="pixel-title">IDENTIFY_OPERATOR</h2>
+            <div class="login-fields">
+                <input type="text" id="login-user" placeholder="USERNAME" class="pixel-input">
+                <input type="password" id="login-pass" placeholder="PASSWORD" class="pixel-input">
+                <button id="auth-btn" class="gothic-neon-btn pixel-btn">AUTHENTICATE</button>
+            </div>
+            <p id="login-error" class="error-msg hidden">ACCESS_DENIED_INVALID_CREDENTIALS</p>
+        </div>
+    </div>
+
     <!-- Cursor Customizado -->
     <div id="custom-cursor"></div>
     <div id="cursor-blur"></div>
 
+    <!-- Scroll Progress Bar -->
+    <div id="scroll-progress"></div>
+
+    <!-- Floating Navigation Arrows -->
+    <div id="scroll-arrows" class="hidden">
+        <div id="scroll-down" class="scroll-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 13l5 5 5-5M7 6l5 5 5-5"/></svg>
+        </div>
+        <div id="scroll-up" class="scroll-arrow hidden">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 11l-5-5-5 5M17 18l-5-5-5 5"/></svg>
+        </div>
+    </div>
+
     <!-- Áudios -->
-    <audio id="bg-music" loop><source src="assets/ambient.mp3" type="audio/mp3"></audio>
+    <audio id="bg-music" loop preload="none"></audio>
     <audio id="click-sound"><source src="assets/click.mp3" type="audio/mp4"></audio>
 
     <div id="glitch-trigger"></div>
 
     <!-- Intro Splash -->
-    <div id="splash-container">
+    <div id="splash-container" class="hidden">
         <video id="intro-video" playsinline>
             <source src="assets/intro.mp4" type="video/mp4">
         </video>
         <div id="terminal-logs"></div>
-        <button id="start-btn" class="gothic-neon-btn" style="position: absolute; z-index: 10000;">REQUEST_YOUR_SOUL</button>
         <button id="skip-btn" class="gothic-neon-btn hidden" style="position: absolute; bottom: 50px; right: 50px; z-index: 10001; font-size: 0.6rem; padding: 10px 20px;">SKIP_SEQUENCE [ESC]</button>
     </div>
 
@@ -31,27 +60,38 @@
     <nav class="hybrid-nav hidden">
         <a href="#home" class="nav-logo">CHROMEBEAST</a>
         <div class="nav-links">
-            <a href="#home">HOME</a>
-            <a href="#play" style="color: var(--cyber-neon); border: 1px solid var(--cyber-neon); padding: 5px 15px; border-radius: 4px;">PLAY_CORE</a>
-            <a href="#about">QUEM_SOU</a>
-            <a href="#gallery">VISUAL_GALLERY</a>
-            <a href="#contact">CONTA_FORMULARIO</a>
+            <a href="#home" target="_blank">HOME</a>
+            <a href="#play" class="nav-play" target="_blank">PLAY_CORE</a>
+            <a href="#about" target="_blank">QUEM_SOU</a>
+            <a href="#gallery" target="_blank">VISUAL_GALLERY</a>
+            <a href="#contact" target="_blank">CONTACT_PROTOCOL</a>
+            <a href="admin.html" target="_blank">ADMIN_CORE</a>
             <a href="https://github.com/vitordevbath" target="_blank" class="github-link">GITHUB</a>
         </div>
     </nav>
 
     <!-- Main Content -->
     <main id="main-content" class="hidden">
-        
+        <!-- Spaceship Drone -->
+        <div id="spaceship-container" class="hidden">
+            <img src="assets/nave.png" alt="Spaceship" id="spaceship-drone">
+        </div>
+
         <!-- SEÇÃO 1: HOME -->
         <section id="home" class="gothic-neon-section">
             <div class="hero-content">
                 <h1 class="chrome-title">CHROMEBEAST</h1>
                 <p class="subtitle">PREMIUM GAME DEVELOPMENT PROTOCOL</p>
-                <div style="margin-top: 50px;">
-                    <a href="#play" class="gothic-neon-btn" style="text-decoration: none;">INITIALIZE_ENGINE</a>
+                <div style="margin-top: 60px; display: flex; justify-content: center;">
+                    <a href="#play" class="gothic-neon-btn" style="text-decoration: none; font-size: 1.5rem; padding: 20px 60px; border-width: 2px; box-shadow: 0 0 30px rgba(0, 242, 255, 0.4);">PLAY_CORE</a>
                 </div>
             </div>
+
+            <!-- 🔻 SCROLL INDICATOR -->
+            <a href="#play" class="scroll-indicator">
+                <span>ENTER</span>
+                <div class="arrow"></div>
+            </a>
         </section>
 
         <!-- SEÇÃO 2: PLAY_STATION (Apenas Jogos) -->
@@ -60,7 +100,7 @@
                 <h2 class="chrome-title" style="font-size: 4rem; margin-bottom: 40px;">PLAY_STATION</h2>
                 <div class="play-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px;">
                     <!-- Jogo 1: Space Conquest -->
-                    <a href="game/index.html" target="_blank" class="glass-card" style="height: 350px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-decoration: none; color: inherit; border: 2px solid var(--cyber-neon); background: rgba(0, 242, 255, 0.03); transition: 0.4s;">
+                    <a href="#contact" data-play-card class="glass-card" style="height: 350px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-decoration: none; color: inherit; border: 2px solid var(--cyber-neon); background: rgba(0, 242, 255, 0.03); transition: 0.4s;">
                         <div style="text-align: center;">
                             <h4 style="font-family: var(--font-main); font-size: 2.2rem; color: #fff; text-shadow: 0 0 15px var(--cyber-neon);">SPACE_CONQUEST</h4>
                             <p style="font-size: 0.8rem; letter-spacing: 5px; color: var(--cyber-neon); margin: 20px 0;">[ OPERATE_FULL_SCREEN ]</p>
@@ -77,7 +117,7 @@
                 <h2 class="chrome-title" style="font-size: 4rem; margin-bottom: 40px;">SYSTEM_OPERATOR</h2>
                 <div class="glass-card">
                     <p style="font-size: 1.2rem; line-height: 1.8; color: #ccc; text-align: center;">
-                        Senior Developer specializing in Cyber-Gothic aesthetics and high-performance gaming architectures. 
+                        Senior Developer specializing in Cyber-Gothic aesthetics and high-performance gaming architectures.
                         Expert in bridging the gap between dark artistic vision and robust technical implementation.
                     </p>
                 </div>
@@ -89,9 +129,9 @@
             <div class="container">
                 <h2 class="chrome-title" style="font-size: 4rem; margin-bottom: 40px;">VISUAL_GALLERY</h2>
                 <div class="gallery-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
-                    <div class="glass-card" style="height: 250px; background: url('assets/thumb1.jpg') center/cover; border: 1px solid rgba(255,255,255,0.1);"></div>
-                    <div class="glass-card" style="height: 250px; background: url('assets/thumb2.jpg') center/cover; border: 1px solid rgba(255,255,255,0.1);"></div>
-                    <div class="glass-card" style="height: 250px; background: url('assets/thumb3.jpg') center/cover; border: 1px solid rgba(255,255,255,0.1);"></div>
+                    <div class="glass-card gallery-placeholder" data-gallery-item style="height: 250px; border: 1px solid rgba(255,255,255,0.1);"></div>
+                    <div class="glass-card gallery-placeholder" data-gallery-item style="height: 250px; border: 1px solid rgba(255,255,255,0.1);"></div>
+                    <div class="glass-card gallery-placeholder" data-gallery-item style="height: 250px; border: 1px solid rgba(255,255,255,0.1);"></div>
                 </div>
             </div>
         </section>
@@ -113,6 +153,8 @@
         </section>
     </main>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="api.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

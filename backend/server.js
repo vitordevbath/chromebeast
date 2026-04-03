@@ -88,9 +88,17 @@ app.delete('/api/messages/:id', (req, res) => {
     });
 });
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
     console.log(`==========================================`);
     console.log(`[CHROMEBEAST] LOCAL CORE: http://localhost:${PORT}`);
     console.log(`[STORAGE] Using JSON File: ${dataDir}`);
     console.log(`==========================================`);
+});
+
+server.on('error', (e) => {
+    if (e.code === 'EADDRINUSE') {
+        console.error(`[FATAL ERROR] Port ${PORT} is already in use.`);
+        console.error(`>> CLOSE existing process using: Stop-Process -Id (Get-NetTCPConnection -LocalPort ${PORT}).OwningProcess -Force`);
+        process.exit(1);
+    }
 });
