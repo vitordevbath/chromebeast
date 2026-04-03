@@ -27,176 +27,46 @@
 body {
     background: #000;
     color: #fff;
-    font-family: var(--font-pixel); /* Mudando para pixel por padrão */
-    overflow-x: hidden;
-    cursor: none;
-    image-rendering: pixelated; /* Renderização pixelada global */
-}
-
-/* Bug Report Link */
-#bug-report {
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    z-index: 10005;
-    font-size: 0.5rem;
-    color: var(--cyber-neon);
-    text-decoration: none;
-    border: 1px solid var(--cyber-neon);
-    padding: 10px;
-    background: rgba(0,0,0,0.8);
-    transition: 0.3s;
-}
-
-#bug-report:hover {
-    background: var(--cyber-neon);
-    color: #000;
-    box-shadow: 0 0 15px var(--cyber-neon);
-}
-
-/* Pixel Modal */
-.pixel-modal {
-    position: fixed;
-    inset: 0;
-    background: #000;
-    z-index: 10010;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.modal-content {
-    background: #000;
-    border: 4px solid var(--cyber-neon);
-    padding: 40px;
-    text-align: center;
-    box-shadow: 0 0 40px rgba(0, 242, 255, 0.2);
-}
-
-.pixel-title {
-    font-size: 1.2rem;
-    margin-bottom: 30px;
-    color: #fff;
-    text-shadow: 2px 2px var(--cyber-pink);
-}
-
-.login-fields {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.pixel-input {
-    background: #111;
-    border: 2px solid #444;
-    padding: 15px;
-    color: var(--cyber-neon);
     font-family: var(--font-pixel);
-    font-size: 0.6rem;
-    outline: none;
+    overflow: hidden; /* DESATIVADO SCROLL */
+    cursor: none;
+    image-rendering: pixelated;
+    height: 100vh;
+    width: 100vw;
 }
 
-.pixel-input:focus {
-    border-color: var(--cyber-neon);
+/* Dynamic Content System */
+.dynamic-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
 }
 
-.pixel-btn {
-    font-family: var(--font-pixel) !important;
-    font-size: 0.7rem !important;
-}
-
-.error-msg {
-    color: var(--cyber-pink);
-    font-size: 0.4rem;
-    margin-top: 15px;
-}
-
-#custom-cursor {
-    width: 8px;
-    height: 8px;
-    background: var(--cyber-neon);
-    border-radius: 50%;
-    position: fixed;
-    pointer-events: none;
-    z-index: 9999999;
-    box-shadow: 0 0 10px var(--cyber-neon);
-    transition: transform 0.1s ease;
-}
-
-#cursor-blur {
-    width: 40px;
-    height: 40px;
-    border: 1px solid var(--cyber-neon);
-    border-radius: 50%;
-    position: fixed;
-    pointer-events: none;
-    z-index: 9999998;
-    box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
-    transition: transform 0.15s ease-out, top 0.15s ease-out, left 0.15s ease-out;
-}
-
-/* Scroll Progress Bar */
-#scroll-progress {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 0%;
-    height: 3px;
-    background: linear-gradient(90deg, var(--cyber-neon), var(--cyber-pink));
-    z-index: 10000;
-    box-shadow: 0 0 10px var(--cyber-neon);
-    transition: width 0.1s ease;
-}
-
-/* Floating Navigation Arrows */
-#scroll-arrows {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    z-index: 9000;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.scroll-arrow {
-    width: 50px;
-    height: 50px;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--glass-border);
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    color: var(--cyber-neon);
-    transition: var(--transition-smooth);
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-}
-
-.scroll-arrow svg {
-    width: 24px;
-    height: 24px;
-    transition: var(--transition-smooth);
-}
-
-.scroll-arrow:hover {
-    border-color: var(--cyber-neon);
-    box-shadow: 0 0 20px var(--cyber-neon);
-    transform: translateY(-5px);
-    background: rgba(0, 242, 255, 0.1);
-}
-
-.scroll-arrow:hover svg {
-    transform: scale(1.2);
-}
-
-.scroll-arrow.hidden {
+.content-section {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
     opacity: 0;
     pointer-events: none;
-    transform: translateY(20px);
+    transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
+    transform: scale(1.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-y: auto; /* Permite scroll apenas dentro do card se necessário, mas a página em si é fixa */
 }
+
+.content-section.active {
+    opacity: 1;
+    pointer-events: all;
+    transform: scale(1);
+    z-index: 10;
+}
+
+/* Removendo elementos de scroll antigo */
+#scroll-progress, #scroll-arrows { display: none !important; }
+
 
 /* Reveal Animations */
 .reveal {

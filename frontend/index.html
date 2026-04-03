@@ -11,7 +11,7 @@
     <!-- Bug Report Link -->
     <a href="mailto:vitordevbath@gmail.com" id="bug-report" class="pixel-link">REPORT_A_BUG</a>
 
-    <!-- Login Modal (Replaces Start Button) -->
+    <!-- Login Modal -->
     <div id="login-modal" class="pixel-modal">
         <div class="modal-content">
             <h2 class="pixel-title">IDENTIFY_OPERATOR</h2>
@@ -27,19 +27,6 @@
     <!-- Cursor Customizado -->
     <div id="custom-cursor"></div>
     <div id="cursor-blur"></div>
-
-    <!-- Scroll Progress Bar -->
-    <div id="scroll-progress"></div>
-
-    <!-- Floating Navigation Arrows -->
-    <div id="scroll-arrows" class="hidden">
-        <div id="scroll-down" class="scroll-arrow">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 13l5 5 5-5M7 6l5 5 5-5"/></svg>
-        </div>
-        <div id="scroll-up" class="scroll-arrow hidden">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 11l-5-5-5 5M17 18l-5-5-5 5"/></svg>
-        </div>
-    </div>
 
     <!-- Áudios -->
     <audio id="bg-music" loop preload="none"></audio>
@@ -58,48 +45,41 @@
 
     <!-- Navegação Superior -->
     <nav class="hybrid-nav hidden">
-        <a href="#home" class="nav-logo">CHROMEBEAST</a>
+        <a href="#home" class="nav-logo" data-nav-link>CHROMEBEAST</a>
         <div class="nav-links">
-            <a href="#home" target="_blank">HOME</a>
-            <a href="#play" class="nav-play" target="_blank">PLAY_CORE</a>
-            <a href="#about" target="_blank">QUEM_SOU</a>
-            <a href="#gallery" target="_blank">VISUAL_GALLERY</a>
-            <a href="#contact" target="_blank">CONTACT_PROTOCOL</a>
+            <a href="#home" data-nav-link>HOME</a>
+            <a href="#play" class="nav-play" data-nav-link>PLAY_CORE</a>
+            <a href="#about" data-nav-link>QUEM_SOU</a>
+            <a href="#gallery" data-nav-link>VISUAL_GALLERY</a>
+            <a href="#contact" data-nav-link>CONTACT_PROTOCOL</a>
             <a href="admin.html" target="_blank">ADMIN_CORE</a>
             <a href="https://github.com/vitordevbath" target="_blank" class="github-link">GITHUB</a>
         </div>
     </nav>
 
-    <!-- Main Content -->
-    <main id="main-content" class="hidden">
+    <!-- Main Content Container -->
+    <main id="main-content" class="hidden dynamic-content">
         <!-- Spaceship Drone -->
         <div id="spaceship-container" class="hidden">
             <img src="assets/nave.png" alt="Spaceship" id="spaceship-drone">
         </div>
 
         <!-- SEÇÃO 1: HOME -->
-        <section id="home" class="gothic-neon-section">
+        <section id="home" class="gothic-neon-section content-section active">
             <div class="hero-content">
                 <h1 class="chrome-title">CHROMEBEAST</h1>
                 <p class="subtitle">PREMIUM GAME DEVELOPMENT PROTOCOL</p>
                 <div style="margin-top: 60px; display: flex; justify-content: center;">
-                    <a href="#play" class="gothic-neon-btn" style="text-decoration: none; font-size: 1.5rem; padding: 20px 60px; border-width: 2px; box-shadow: 0 0 30px rgba(0, 242, 255, 0.4);">PLAY_CORE</a>
+                    <button data-target="play" class="gothic-neon-btn internal-btn" style="font-size: 1.5rem; padding: 20px 60px; border-width: 2px; box-shadow: 0 0 30px rgba(0, 242, 255, 0.4);">PLAY_CORE</button>
                 </div>
             </div>
-
-            <!-- 🔻 SCROLL INDICATOR -->
-            <a href="#play" class="scroll-indicator">
-                <span>ENTER</span>
-                <div class="arrow"></div>
-            </a>
         </section>
 
-        <!-- SEÇÃO 2: PLAY_STATION (Apenas Jogos) -->
-        <section id="play" class="cyber-section">
+        <!-- SEÇÃO 2: PLAY_STATION -->
+        <section id="play" class="cyber-section content-section">
             <div class="container">
                 <h2 class="chrome-title" style="font-size: 4rem; margin-bottom: 40px;">PLAY_STATION</h2>
                 <div class="play-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px;">
-                    <!-- Jogo 1: Space Conquest -->
                     <a href="#contact" data-play-card class="glass-card" style="height: 350px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-decoration: none; color: inherit; border: 2px solid var(--cyber-neon); background: rgba(0, 242, 255, 0.03); transition: 0.4s;">
                         <div style="text-align: center;">
                             <h4 style="font-family: var(--font-main); font-size: 2.2rem; color: #fff; text-shadow: 0 0 15px var(--cyber-neon);">SPACE_CONQUEST</h4>
@@ -112,7 +92,7 @@
         </section>
 
         <!-- SEÇÃO 3: QUEM SOU -->
-        <section id="about" class="gothic-neon-section">
+        <section id="about" class="gothic-neon-section content-section">
             <div class="container">
                 <h2 class="chrome-title" style="font-size: 4rem; margin-bottom: 40px;">SYSTEM_OPERATOR</h2>
                 <div class="glass-card">
@@ -124,8 +104,8 @@
             </div>
         </section>
 
-        <!-- SEÇÃO 4: VISUAL_GALLERY (Apenas Fotos) -->
-        <section id="gallery" class="cyber-section">
+        <!-- SEÇÃO 4: VISUAL_GALLERY -->
+        <section id="gallery" class="cyber-section content-section">
             <div class="container">
                 <h2 class="chrome-title" style="font-size: 4rem; margin-bottom: 40px;">VISUAL_GALLERY</h2>
                 <div class="gallery-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
@@ -137,7 +117,7 @@
         </section>
 
         <!-- SEÇÃO 5: CONTATO -->
-        <section id="contact" class="gothic-neon-section">
+        <section id="contact" class="gothic-neon-section content-section">
             <div class="container">
                 <h2 class="chrome-title" style="font-size: 4rem; margin-bottom: 40px;">CONTACT_PROTOCOL</h2>
                 <div class="glass-card" style="max-width: 600px; margin: 0 auto;">

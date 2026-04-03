@@ -33,7 +33,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 2. AUTHENTICATION LOGIC
+    // 2. AUTHENTICATION LOGIC (Session-based)
+    const checkLogin = () => {
+        // Usamos sessionStorage para que o login expire ao fechar a aba/navegador
+        const isLoggedIn = sessionStorage.getItem('chromebeast_auth');
+        if (isLoggedIn) {
+            loginModal.style.display = 'none';
+            splash.classList.remove('hidden');
+            startIntro();
+        }
+    };
+
     authBtn.onclick = () => {
         const user = document.getElementById('login-user').value;
         const pass = document.getElementById('login-pass').value;
@@ -44,8 +54,8 @@ document.addEventListener('DOMContentLoaded', () => {
             clickSound.play().catch(() => {});
         }
 
-        // Simulação de Login (Aceita qualquer coisa preenchida)
         if (user && pass) {
+            sessionStorage.setItem('chromebeast_auth', 'true');
             loginModal.classList.add('fade-out');
             setTimeout(() => {
                 loginModal.style.display = 'none';
@@ -57,6 +67,51 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => errorMsg.classList.add('hidden'), 3000);
         }
     };
+
+    checkLogin();
+
+    // 2.5 NAVIGATION SYSTEM (SPA style)
+    const sections = document.querySelectorAll('.content-section');
+    const navLinks = document.querySelectorAll('[data-nav-link]');
+    const internalBtns = document.querySelectorAll('.internal-btn');
+
+    function switchSection(targetId) {
+        const targetSection = document.getElementById(targetId);
+        if (!targetSection) return;
+
+        // Toca som de clique
+        if (clickSound) {
+            clickSound.currentTime = 0;
+            clickSound.play().catch(() => {});
+        }
+
+        // Remove classe ativa de todas
+        sections.forEach(s => s.classList.remove('active'));
+        
+        // Ativa a nova
+        targetSection.classList.add('active');
+
+        // Fecha menu mobile se existisse (opcional)
+        console.log(`[NAV] Switched to section: ${targetId}`);
+    }
+
+    navLinks.forEach(link => {
+        link.onclick = (e) => {
+            const href = link.getAttribute('href');
+            if (href.startsWith('#')) {
+                e.preventDefault();
+                const id = href.substring(1);
+                switchSection(id);
+            }
+        };
+    });
+
+    internalBtns.forEach(btn => {
+        btn.onclick = () => {
+            const target = btn.getAttribute('data-target');
+            switchSection(target);
+        };
+    });
 
     function startIntro() {
         skipBtn.classList.remove('hidden'); 
