@@ -1,1 +1,8 @@
 backend/data/contact_messages.json
+.vs/
+*.vsidx
+*.sqlite
+*.db-shm
+*.db-wal
+node_modules/
+.env
