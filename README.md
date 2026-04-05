@@ -7,7 +7,7 @@ Landing page com painel admin, backend local em Express + SQLite, launcher em .N
 - `src/frontend`: interface estática, login/cadastro, recuperação de senha, contato e painel admin
 - `src/backend`: API local em Express, autenticação, SQLite e envio opcional de e-mail via SMTP
 - `src/launcher`: launcher em .NET 7 para subir o backend e abrir o sistema
-- `dist`: artefatos já gerados
+- `dist`: artefatos já gerados localmente e ignorados no Git
 
 ## Rodar Localmente
 
@@ -38,7 +38,7 @@ Se `SMTP_USER` não estiver configurado no `.env`, os códigos são devolvidos n
 
 ## Painel Admin
 
-Abra `src/frontend/admin.html` ou `http://localhost:3000/admin.html`.
+Abra `http://localhost:3000/admin.html` ou `src/frontend/admin.html`.
 
 O painel exige `ADMIN_TOKEN`, salvo no navegador pelo próprio formulário da tela.
 
