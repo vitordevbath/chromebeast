@@ -1,13 +1,13 @@
 # Starcore Sentinel
 
-Landing page com painel admin, backend local em Express + SQLite, launcher em .NET e suporte parcial de deploy com Netlify Functions + Neon/Drizzle.
+Landing page com painel admin, backend local em Express + SQLite e launcher em .NET para automação no Windows.
 
 ## Estrutura
 
 - `src/frontend`: interface estática, login/cadastro, recuperação de senha, contato e painel admin
 - `src/backend`: API local em Express, autenticação, SQLite e envio opcional de e-mail via SMTP
 - `src/launcher`: launcher em .NET 7 para subir o backend e abrir o sistema
-- `dist`: artefatos já gerados localmente e ignorados no Git
+- `dist`: artefatos gerados localmente
 
 ## Rodar Localmente
 
@@ -35,6 +35,17 @@ node server.js
 ```
 
 Depois abra `http://localhost:3000`.
+
+## Deploy em VPS
+
+O modelo de deploy recomendado agora é simples:
+
+1. subir o projeto em uma VPS Linux ou Windows
+2. instalar Node.js
+3. rodar o backend Express em `src/backend`
+4. expor a porta 3000 diretamente ou colocar Nginx/Caddy na frente
+
+Como o Express já serve o frontend estático e a API no mesmo processo, não é necessário Netlify nem funções serverless.
 
 ## Gerar Pacote EXE
 
@@ -70,25 +81,13 @@ Abra `http://localhost:3000/admin.html` ou `src/frontend/admin.html`.
 
 O painel exige `ADMIN_TOKEN`, salvo no navegador pelo próprio formulário da tela.
 
-## Deploy
-
-- contato: `src/frontend/netlify/functions/contact.js`
-- mensagens admin: `src/frontend/netlify/functions/messages.js`
-- autenticacao remota: `src/frontend/netlify/functions/auth.js`
-
-As funções de autenticação continuam locais no backend Express.
-
 ## Variáveis de Ambiente
 
-Local:
+Local ou VPS:
 
-- copie `.env.example` para `.env` dentro do backend local quando quiser SMTP real
+- copie `.env.example` para `.env` no backend quando quiser SMTP real
 - `ADMIN_TOKEN` controla o acesso ao painel admin
-
-Netlify:
-
-- configure `DATABASE_URL` ou `NETLIFY_DATABASE_URL` apontando para o banco Neon/Postgres
-- configure `ADMIN_TOKEN` se quiser sobrescrever o valor padrão
+- `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS` e `SMTP_FROM` controlam o envio de e-mail
 
 ## Desenvolvido por
 
