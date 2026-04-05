@@ -1,63 +1,53 @@
 (() => {
-    const LOCAL_API_BASE = 'http://localhost:3000/api';
-    const NETLIFY_FUNCTIONS_BASE = '/.netlify/functions';
+    const BASE_API_LOCAL = 'http://localhost:3000/api';
+    const BASE_FUNCOES_NETLIFY = '/.netlify/functions';
 
-    function getEnvironmentMode() {
+    function obterModoAmbiente() {
         const { protocol, hostname, port } = window.location;
-
-        if (protocol === 'file:') {
-            return 'local-file';
-        }
-
-        const isLocalHost = hostname === 'localhost' || hostname === '127.0.0.1';
-        if (isLocalHost && port !== '3000') {
-            return 'local-dev';
-        }
-
-        return 'deployed';
+        if (protocol === 'file:') return 'arquivo-local';
+        const ehLocalHost = hostname === 'localhost' || hostname === '127.0.0.1';
+        if (ehLocalHost && port !== '3000') return 'dev-local';
+        return 'producao';
     }
 
-    function buildUrl(resource, id) {
-        const normalizedId = id !== undefined ? `/${encodeURIComponent(id)}` : '';
-        const mode = getEnvironmentMode();
-
-        if (mode === 'local-file' || mode === 'local-dev') {
-            return `${LOCAL_API_BASE}/${resource}${normalizedId}`;
+    function construirUrl(recurso, id) {
+        const idNormalizado = id !== undefined ? `/${encodeURIComponent(id)}` : '';
+        const modo = obterModoAmbiente();
+        if (modo === 'arquivo-local' || modo === 'dev-local') {
+            return `${BASE_API_LOCAL}/${recurso}${idNormalizado}`;
         }
-
-        return `${NETLIFY_FUNCTIONS_BASE}/${resource}${normalizedId}`;
+        return `${BASE_FUNCOES_NETLIFY}/${recurso}${idNormalizado}`;
     }
 
-    async function request(resource, options = {}, id) {
-        const response = await fetch(buildUrl(resource, id), options);
-        const text = await response.text();
-        const data = text ? JSON.parse(text) : null;
+    async function requisicao(recurso, opcoes = {}, id) {
+        const resposta = await fetch(construirUrl(recurso, id), opcoes);
+        const texto = await resposta.text();
+        const dados = texto ? JSON.parse(texto) : null;
 
-        if (!response.ok) {
-            const error = new Error(data?.error || `REQUEST_FAILED_${response.status}`);
-            error.status = response.status;
-            error.payload = data;
-            throw error;
+        if (!resposta.ok) {
+            const erro = new Error(dados?.erro || `FALHA_NA_REQUISICAO_${resposta.status}`);
+            erro.status = resposta.status;
+            erro.dados = dados;
+            throw erro;
         }
-
-        return data;
+        return dados;
     }
 
-    window.ChromeBeastApi = {
-        async sendContact(payload) {
-            return request('contact', {
+    window.ApiChromeBeast = {
+        async enviarContato(corpo) {
+            return requisicao('contato', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
+                body: JSON.stringify(corpo)
             });
         },
 
-        async listMessages() {
-            return request('messages', { method: 'GET' });
+        async listarMensagens() {
+            return requisicao('mensagens', { method: 'GET' });
         },
 
-        async deleteMessage(id) {
-            return request('messages', { method: 'DELETE' }, id);
+        async excluirMensagem(id) {
+            return requisicao('mensagens', { method: 'DELETE' }, id);
         }
     };
 })();

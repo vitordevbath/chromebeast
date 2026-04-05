@@ -1,12 +1,12 @@
 const { pgTable, serial, text, timestamp } = require('drizzle-orm/pg-core');
 
 // Definição da tabela de contatos (Padrão Neon/Drizzle)
-const contactMessages = pgTable('contact_messages', {
+const mensagensContato = pgTable('mensagens_contato', {
   id: serial('id').primaryKey(),
-  name: text('name').notNull(),
+  nome: text('nome').notNull(),
   email: text('email').notNull(),
-  message: text('message').notNull(),
-  timestamp: timestamp('timestamp').defaultNow(),
+  mensagem: text('mensagem').notNull(),
+  data_hora: timestamp('data_hora').defaultNow(),
 });
 
-module.exports = { contactMessages };
+module.exports = { mensagensContato };

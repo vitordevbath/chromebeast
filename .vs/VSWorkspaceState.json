@@ -1,8 +1,11 @@
 {
   "ExpandedNodes": [
     "",
-    "\\frontend"
+    "\\backend",
+    "\\frontend",
+    "\\frontend\\assets",
+    "\\frontend\\netlify",
+    "\\frontend\\netlify\\functions"
   ],
-  "SelectedNode": "\\frontend\\index.html",
   "PreviewInSolutionExplorer": false
 }

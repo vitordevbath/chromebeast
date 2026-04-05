@@ -3,131 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CHROMEBEAST | Gothic Neon Hub</title>
+    <title>CHROMEBEAST | Hub Gótico Neon</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Bug Report Link -->
-    <a href="mailto:vitordevbath@gmail.com" id="bug-report" class="pixel-link">REPORT_A_BUG</a>
+    <!-- Link de Reportar Bug -->
+    <a href="mailto:vitordevbath@gmail.com" id="reportar-bug" class="link-pixel">REPORTAR_BUG</a>
 
-    <!-- Login Modal -->
-    <div id="login-modal" class="pixel-modal">
-        <div class="modal-content">
-            <h2 class="pixel-title">IDENTIFY_OPERATOR</h2>
-            <div class="login-fields">
-                <input type="text" id="login-user" placeholder="USERNAME" class="pixel-input">
-                <input type="password" id="login-pass" placeholder="PASSWORD" class="pixel-input">
-                <button id="auth-btn" class="gothic-neon-btn pixel-btn">AUTHENTICATE</button>
+    <!-- Modal de Autenticação -->
+    <div id="modal-autenticacao" class="modal-pixel">
+        <div class="conteudo-modal">
+            <div class="abas-modal">
+                <button id="aba-entrar" class="botao-aba ativo">ENTRAR</button>
+                <button id="aba-cadastrar" class="botao-aba">CADASTRAR</button>
             </div>
-            <p id="login-error" class="error-msg hidden">ACCESS_DENIED_INVALID_CREDENTIALS</p>
+
+            <!-- Formulário Entrar -->
+            <div id="form-entrar" class="formulario-autenticacao">
+                <h2 class="titulo-pixel">IDENTIFICAR_OPERADOR</h2>
+                <div class="campos-autenticacao">
+                    <input type="text" id="login-usuario" placeholder="USUÁRIO" class="input-pixel">
+                    <input type="password" id="login-senha" placeholder="SENHA" class="input-pixel">
+                    <button id="botao-autenticar" class="botao-neon-gotico botao-pixel">AUTENTICAR</button>
+                </div>
+                <p id="erro-login" class="mensagem-erro oculto">ACESSO_NEGADO_CREDENCIAIS_INVÁLIDAS</p>
+            </div>
+
+            <!-- Formulário Cadastrar -->
+            <div id="form-cadastrar" class="formulario-autenticacao oculto">
+                <h2 class="titulo-pixel">NOVA_IDENTIDADE</h2>
+                <div class="campos-autenticacao">
+                    <input type="text" id="cad-usuario" placeholder="ESCOLHER_USUÁRIO" class="input-pixel">
+                    <input type="password" id="cad-senha" placeholder="ESCOLHER_SENHA" class="input-pixel">
+                    <input type="password" id="cad-senha-confirma" placeholder="CONFIRMAR_SENHA" class="input-pixel">
+                    <button id="botao-cadastrar" class="botao-neon-gotico botao-pixel">CRIAR_IDENTIDADE</button>
+                </div>
+                <p id="msg-cadastro" class="mensagem-erro oculto"></p>
+            </div>
         </div>
     </div>
 
-    <!-- Cursor Customizado -->
-    <div id="custom-cursor"></div>
-    <div id="cursor-blur"></div>
+    <div id="cursor-customizado"></div>
+    <div id="cursor-desfoque"></div>
 
-    <!-- Áudios -->
-    <audio id="bg-music" loop preload="none"></audio>
-    <audio id="click-sound"><source src="assets/click.mp3" type="audio/mp4"></audio>
-
-    <div id="glitch-trigger"></div>
-
-    <!-- Intro Splash -->
-    <div id="splash-container" class="hidden">
-        <video id="intro-video" playsinline>
-            <source src="assets/intro.mp4" type="video/mp4">
-        </video>
-        <div id="terminal-logs"></div>
-        <button id="skip-btn" class="gothic-neon-btn hidden" style="position: absolute; bottom: 50px; right: 50px; z-index: 10001; font-size: 0.6rem; padding: 10px 20px;">SKIP_SEQUENCE [ESC]</button>
+    <!-- Splash de Intro -->
+    <div id="container-splash" class="oculto">
+        <div id="logs-terminal"></div>
+        <button id="botao-pular" class="botao-neon-gotico oculto" style="position: absolute; bottom: 50px; right: 50px; z-index: 10001; font-size: 0.6rem; padding: 10px 20px;">PULAR_SEQUÊNCIA [ESC]</button>
     </div>
 
+
     <!-- Navegação Superior -->
-    <nav class="hybrid-nav hidden">
-        <a href="#home" class="nav-logo" data-nav-link>CHROMEBEAST</a>
-        <div class="nav-links">
-            <a href="#home" data-nav-link>HOME</a>
-            <a href="#play" class="nav-play" data-nav-link>PLAY_CORE</a>
-            <a href="#about" data-nav-link>QUEM_SOU</a>
-            <a href="#gallery" data-nav-link>VISUAL_GALLERY</a>
-            <a href="#contact" data-nav-link>CONTACT_PROTOCOL</a>
-            <a href="admin.html" target="_blank">ADMIN_CORE</a>
-            <a href="https://github.com/vitordevbath" target="_blank" class="github-link">GITHUB</a>
+    <nav class="navegacao-hibrida oculto">
+        <a href="#inicio" class="logo-nav" data-link-nav>CHROMEBEAST</a>
+        <div class="links-nav">
+            <a href="#inicio" data-link-nav>INÍCIO</a>
+            <a href="#jogar" class="nav-jogar" data-link-nav>JOGAR</a>
+            <a href="#sobre" data-link-nav>QUEM_SOU</a>
+            <a href="#galeria" data-link-nav>GALERIA</a>
+            <a href="#contato" data-link-nav>CONTATO</a>
+            <a href="admin.html" target="_blank">PAINEL_ADMIN</a>
+            <a href="https://github.com/vitordevbath" target="_blank" class="link-github">GITHUB</a>
         </div>
     </nav>
 
-    <!-- Main Content Container -->
-    <main id="main-content" class="hidden dynamic-content">
-        <!-- Spaceship Drone -->
-        <div id="spaceship-container" class="hidden">
-            <img src="assets/nave.png" alt="Spaceship" id="spaceship-drone">
+    <main id="conteudo-principal" class="oculto conteudo-dinamico">
+        <!-- Nave Drone -->
+        <div id="container-nave" class="oculto">
+            <img src="assets/nave.png" alt="Nave" id="drone-nave">
         </div>
 
-        <!-- SEÇÃO 1: HOME -->
-        <section id="home" class="gothic-neon-section content-section active">
-            <div class="hero-content">
-                <h1 class="chrome-title">CHROMEBEAST</h1>
-                <p class="subtitle">PREMIUM GAME DEVELOPMENT PROTOCOL</p>
+        <!-- SEÇÕES -->
+        <section id="inicio" class="secao-neon-gotica secao-conteudo ativo">
+            <div class="conteudo-hero">
+                <h1 class="titulo-cromo">CHROMEBEAST</h1>
+                <p class="subtitulo">PROTOCOLO DE DESENVOLVIMENTO DE JOGOS PREMIUM</p>
                 <div style="margin-top: 60px; display: flex; justify-content: center;">
-                    <button data-target="play" class="gothic-neon-btn internal-btn" style="font-size: 1.5rem; padding: 20px 60px; border-width: 2px; box-shadow: 0 0 30px rgba(0, 242, 255, 0.4);">PLAY_CORE</button>
+                    <button data-alvo="jogar" class="botao-neon-gotico botao-interno" style="font-size: 1.5rem; padding: 20px 60px; border-width: 2px; box-shadow: 0 0 30px rgba(188, 19, 254, 0.4);">INICIAR_NÚCLEO</button>
                 </div>
             </div>
         </section>
 
-        <!-- SEÇÃO 2: PLAY_STATION -->
-        <section id="play" class="cyber-section content-section">
+        <section id="jogar" class="secao-ciber secao-conteudo">
             <div class="container">
-                <h2 class="chrome-title" style="font-size: 4rem; margin-bottom: 40px;">PLAY_STATION</h2>
-                <div class="play-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px;">
-                    <a href="#contact" data-play-card class="glass-card" style="height: 350px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-decoration: none; color: inherit; border: 2px solid var(--cyber-neon); background: rgba(0, 242, 255, 0.03); transition: 0.4s;">
+                <h2 class="titulo-cromo" style="font-size: 4rem; margin-bottom: 40px;">ESTAÇÃO_DE_JOGOS</h2>
+                <div class="grade-jogos" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px;">
+                    <a href="#contato" data-card-jogo class="card-vidro" style="height: 350px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-decoration: none; color: inherit; border: 2px solid var(--neon-ciber); background: rgba(188, 19, 254, 0.03); transition: 0.4s;">
                         <div style="text-align: center;">
-                            <h4 style="font-family: var(--font-main); font-size: 2.2rem; color: #fff; text-shadow: 0 0 15px var(--cyber-neon);">SPACE_CONQUEST</h4>
-                            <p style="font-size: 0.8rem; letter-spacing: 5px; color: var(--cyber-neon); margin: 20px 0;">[ OPERATE_FULL_SCREEN ]</p>
-                            <span class="gothic-neon-btn" style="font-size: 0.7rem; padding: 12px 30px;">LAUNCH_GAME</span>
+                            <h4 style="font-family: var(--fonte-principal); font-size: 2.2rem; color: #fff; text-shadow: 0 0 15px var(--neon-ciber);">CONQUISTA_ESPACIAL</h4>
+                            <p style="font-size: 0.8rem; letter-spacing: 5px; color: var(--neon-ciber); margin: 20px 0;">[ OPERAR_EM_TELA_CHEIA ]</p>
+                            <span class="botao-neon-gotico" style="font-size: 0.7rem; padding: 12px 30px;">LANÇAR_JOGO</span>
                         </div>
                     </a>
                 </div>
             </div>
         </section>
 
-        <!-- SEÇÃO 3: QUEM SOU -->
-        <section id="about" class="gothic-neon-section content-section">
+        <section id="sobre" class="secao-neon-gotica secao-conteudo">
             <div class="container">
-                <h2 class="chrome-title" style="font-size: 4rem; margin-bottom: 40px;">SYSTEM_OPERATOR</h2>
-                <div class="glass-card">
-                    <p style="font-size: 1.2rem; line-height: 1.8; color: #ccc; text-align: center;">
-                        Senior Developer specializing in Cyber-Gothic aesthetics and high-performance gaming architectures.
-                        Expert in bridging the gap between dark artistic vision and robust technical implementation.
+                <h2 class="titulo-cromo" style="font-size: 4rem; margin-bottom: 40px;">OPERADOR_DO_SISTEMA</h2>
+                <div class="card-vidro">
+                    <p style="font-size: 1.1rem; line-height: 1.8; color: #ccc; text-align: left; font-family: var(--fonte-mono);">
+                        >> NOME: VITOR DEV BATH<br>
+                        >> ESPECIALIDADE: ARQUITETURA DE SISTEMAS CIBER-GÓTICOS<br>
+                        >> STATUS: ATIVO NO CORTEX<br><br>
+                        Desenvolvedor focado em criar experiências digitais imersivas que unem a agressividade do Neon com a elegância da estética Gótica. Especialista em JavaScript, Node.js e desenvolvimento de jogos independentes. Minha missão é converter código puro em arte digital funcional.
                     </p>
                 </div>
             </div>
         </section>
 
-        <!-- SEÇÃO 4: VISUAL_GALLERY -->
-        <section id="gallery" class="cyber-section content-section">
+        <section id="galeria" class="secao-ciber secao-conteudo">
             <div class="container">
-                <h2 class="chrome-title" style="font-size: 4rem; margin-bottom: 40px;">VISUAL_GALLERY</h2>
-                <div class="gallery-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
-                    <div class="glass-card gallery-placeholder" data-gallery-item style="height: 250px; border: 1px solid rgba(255,255,255,0.1);"></div>
-                    <div class="glass-card gallery-placeholder" data-gallery-item style="height: 250px; border: 1px solid rgba(255,255,255,0.1);"></div>
-                    <div class="glass-card gallery-placeholder" data-gallery-item style="height: 250px; border: 1px solid rgba(255,255,255,0.1);"></div>
+                <h2 class="titulo-cromo" style="font-size: 4rem; margin-bottom: 40px;">GALERIA_VISUAL</h2>
+                <div class="grade-galeria" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                    <div class="card-vidro galeria-espaco" data-item-galeria style="height: 250px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center;">
+                        <span style="font-size: 0.6rem; color: #555;">[ ASSET_01_PENDENTE ]</span>
+                    </div>
+                    <div class="card-vidro galeria-espaco" data-item-galeria style="height: 250px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center;">
+                        <span style="font-size: 0.6rem; color: #555;">[ ASSET_02_PENDENTE ]</span>
+                    </div>
+                    <div class="card-vidro galeria-espaco" data-item-galeria style="height: 250px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center;">
+                        <span style="font-size: 0.6rem; color: #555;">[ ASSET_03_PENDENTE ]</span>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- SEÇÃO 5: CONTATO -->
-        <section id="contact" class="gothic-neon-section content-section">
+        <section id="contato" class="secao-neon-gotica secao-conteudo">
             <div class="container">
-                <h2 class="chrome-title" style="font-size: 4rem; margin-bottom: 40px;">CONTACT_PROTOCOL</h2>
-                <div class="glass-card" style="max-width: 600px; margin: 0 auto;">
-                    <form id="contact-form">
-                        <input type="text" id="contact-name" placeholder="OPERATOR_NAME" style="width: 100%; padding: 15px; margin-bottom: 15px; background: rgba(0,0,0,0.5); border: 1px solid #444; color: #fff;">
-                        <input type="email" id="contact-email" placeholder="ENCRYPTED_EMAIL" style="width: 100%; padding: 15px; margin-bottom: 15px; background: rgba(0,0,0,0.5); border: 1px solid #444; color: #fff;">
-                        <textarea id="contact-message" placeholder="TRANSMIT_DATA_PACKAGE" rows="4" style="width: 100%; padding: 15px; margin-bottom: 15px; background: rgba(0,0,0,0.5); border: 1px solid #444; color: #fff;"></textarea>
-                        <button type="submit" class="gothic-neon-btn" style="width: 100%;">SEND_SIGNAL</button>
+                <h2 class="titulo-cromo" style="font-size: 4rem; margin-bottom: 40px;">PROTOCOLO_DE_CONTATO</h2>
+                <div class="card-vidro" style="max-width: 600px; margin: 0 auto;">
+                    <form id="formulario-contato">
+                        <div class="campos-autenticacao">
+                            <input type="text" id="contato-nome" placeholder="NOME_DO_OPERADOR" class="input-pixel" required>
+                            <input type="email" id="contato-email" placeholder="E-MAIL_CRIPTOGRAFADO" class="input-pixel" required>
+                            <textarea id="contato-mensagem" placeholder="TRANSMITIR_PACOTE_DE_DADOS" rows="4" class="input-pixel" required></textarea>
+                            <button type="submit" id="botao-enviar-contato" class="botao-neon-gotico botao-pixel">ENVIAR_SINAL</button>
+                        </div>
                     </form>
-                    <div id="form-msg" style="margin-top: 20px; text-align: center;"></div>
+                    <div id="msg-formulario" style="margin-top: 20px; text-align: center; font-size: 0.5rem;"></div>
                 </div>
             </div>
         </section>

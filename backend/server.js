@@ -4,101 +4,98 @@ const fs = require('fs');
 const path = require('path');
 
 const app = express();
-const PORT = 3000;
+const PORTA = 3000;
 
-// Configuração de CORS - Essencial para que o frontend fale com o backend local
 app.use(cors());
 app.use(express.json());
 
-// Garantir que a pasta de dados existe
-const dataDir = path.join(__dirname, 'data');
-if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir);
+const diretorioDados = path.join(__dirname, 'data');
+if (!fs.existsSync(diretorioDados)) {
+    fs.mkdirSync(diretorioDados);
 }
 
-// ROTA PRINCIPAL: Salvar Contato (JSON Local)
-app.post('/api/contact', (req, res) => {
-    const { name, email, message, timestamp } = req.body;
+// ROTA: Salvar Contato (JSON Local)
+app.post('/api/contato', (req, res) => {
+    const { nome, email, mensagem, data_hora } = req.body;
     
-    if (!name || !email || !message) {
-        return res.status(400).send({ error: "DATA_INCOMPLETE" });
+    if (!nome || !email || !mensagem) {
+        return res.status(400).send({ erro: "DADOS_INCOMPLETOS" });
     }
 
-    const newMessage = { 
+    const novaMensagem = { 
         id: Date.now(),
-        name, 
+        nome, 
         email, 
-        message, 
-        timestamp: timestamp || new Date().toISOString() 
+        mensagem, 
+        data_hora: data_hora || new Date().toISOString() 
     };
 
-    const filePath = path.join(dataDir, 'contact_messages.json');
+    const caminhoArquivo = path.join(diretorioDados, 'mensagens_contato.json');
     
-    // Ler arquivo atual, adicionar nova mensagem e salvar
-    fs.readFile(filePath, 'utf8', (err, data) => {
-        let messages = [];
-        if (!err && data) {
+    fs.readFile(caminhoArquivo, 'utf8', (err, dados) => {
+        let mensagens = [];
+        if (!err && dados) {
             try {
-                messages = JSON.parse(data);
+                mensagens = JSON.parse(dados);
             } catch (e) {
-                messages = [];
+                mensagens = [];
             }
         }
         
-        messages.push(newMessage);
+        mensagens.push(novaMensagem);
         
-        fs.writeFile(filePath, JSON.stringify(messages, null, 2), (err) => {
+        fs.writeFile(caminhoArquivo, JSON.stringify(mensagens, null, 2), (err) => {
             if (err) {
-                return res.status(500).send({ error: "FILE_WRITE_FAILURE" });
+                return res.status(500).send({ erro: "FALHA_AO_GRAVAR_ARQUIVO" });
             }
-            console.log(`[CORE] New Signal from ${name} stored in JSON DATABASE.`);
-            res.status(201).send({ message: "SUCCESS_SIGNAL_STORED" });
+            console.log(`[NÚCLEO] Novo sinal de ${nome} armazenado.`);
+            res.status(201).send({ mensagem: "SUCESSO_SINAL_ARMAZENADO" });
         });
     });
 });
 
-// ROTA EXTRA: Ver todas as mensagens
-app.get('/api/messages', (req, res) => {
-    const filePath = path.join(dataDir, 'contact_messages.json');
-    fs.readFile(filePath, 'utf8', (err, data) => {
+// ROTA: Listar Mensagens
+app.get('/api/mensagens', (req, res) => {
+    const caminhoArquivo = path.join(diretorioDados, 'mensagens_contato.json');
+    fs.readFile(caminhoArquivo, 'utf8', (err, dados) => {
         if (err) return res.send([]);
         try {
-            res.send(JSON.parse(data));
+            res.send(JSON.parse(dados));
         } catch (e) {
             res.send([]);
         }
     });
 });
 
-// ROTA EXTRA: Deletar uma mensagem específica
-app.delete('/api/messages/:id', (req, res) => {
+// ROTA: Deletar Mensagem
+app.delete('/api/mensagens/:id', (req, res) => {
     const { id } = req.params;
-    const filePath = path.join(dataDir, 'contact_messages.json');
+    const caminhoArquivo = path.join(diretorioDados, 'mensagens_contato.json');
 
-    fs.readFile(filePath, 'utf8', (err, data) => {
-        if (err) return res.status(500).send({ error: "READ_FAILURE" });
+    fs.readFile(caminhoArquivo, 'utf8', (err, dados) => {
+        if (err) return res.status(500).send({ erro: "FALHA_NA_LEITURA" });
         
-        let messages = JSON.parse(data || "[]");
-        const filteredMessages = messages.filter(m => m.id != id);
+        let mensagens = JSON.parse(dados || "[]");
+        const mensagensFiltradas = mensagens.filter(m => m.id != id);
         
-        fs.writeFile(filePath, JSON.stringify(filteredMessages, null, 2), (err) => {
-            if (err) return res.status(500).send({ error: "DELETE_FAILURE" });
-            res.send({ message: "SIGNAL_PURGED" });
+        fs.writeFile(caminhoArquivo, JSON.stringify(mensagensFiltradas, null, 2), (err) => {
+            if (err) return res.status(500).send({ erro: "FALHA_NA_EXCLUSÃO" });
+            res.send({ mensagem: "SINAL_PURGADO" });
         });
     });
 });
 
-const server = app.listen(PORT, () => {
+const servidor = app.listen(PORTA, () => {
     console.log(`==========================================`);
-    console.log(`[CHROMEBEAST] LOCAL CORE: http://localhost:${PORT}`);
-    console.log(`[STORAGE] Using JSON File: ${dataDir}`);
+    console.log(`[CHROMEBEAST] NÚCLEO LOCAL: http://localhost:${PORTA}`);
+    console.log(`[ARMAZENAMENTO] Usando arquivo JSON em: ${diretorioDados}`);
     console.log(`==========================================`);
 });
 
-server.on('error', (e) => {
-    if (e.code === 'EADDRINUSE') {
-        console.error(`[FATAL ERROR] Port ${PORT} is already in use.`);
-        console.error(`>> CLOSE existing process using: Stop-Process -Id (Get-NetTCPConnection -LocalPort ${PORT}).OwningProcess -Force`);
+servidor.on('error', (erro) => {
+    if (erro.code === 'EADDRINUSE') {
+        console.error(`\n[ERRO FATAL] A porta ${PORTA} já está sendo usada.`);
+        console.error(`>> Libere a porta com o comando: Stop-Process -Id (Get-NetTCPConnection -LocalPort ${PORTA}).OwningProcess -Force\n`);
         process.exit(1);
     }
 });

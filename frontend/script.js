@@ -1,393 +1,272 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const api = window.ChromeBeastApi;
-    const body = document.body;
-    const splash = document.getElementById('splash-container');
-    const loginModal = document.getElementById('login-modal');
-    const authBtn = document.getElementById('auth-btn');
-    const skipBtn = document.getElementById('skip-btn');
-    const video = document.getElementById('intro-video');
-    const mainContent = document.getElementById('main-content');
-    const nav = document.querySelector('.hybrid-nav');
-    const terminal = document.getElementById('terminal-logs');
-    
-    const bgMusic = document.getElementById('bg-music');
-    const clickSound = document.getElementById('click-sound');
-    const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
-    const playCard = document.querySelector('[data-play-card]');
-    const galleryItems = document.querySelectorAll('[data-gallery-item]');
+    const api = window.ApiChromeBeast;
+    const corpo = document.body;
+    const splash = document.getElementById('container-splash');
+    const modalAutenticacao = document.getElementById('modal-autenticacao');
+    const botaoAutenticar = document.getElementById('botao-autenticar');
+    const botaoPular = document.getElementById('botao-pular');
+    const conteudoPrincipal = document.getElementById('conteudo-principal');
+    const nav = document.querySelector('.navegacao-hibrida');
+    const terminal = document.getElementById('logs-terminal');
 
-    if (!api) {
-        console.error('ChromeBeastApi is not available.');
-    }
+    if (!api) console.error('ApiChromeBeast não disponível.');
 
     // 1. CURSOR CUSTOMIZADO
-    const cursor = document.getElementById('custom-cursor');
-    const cursorBlur = document.getElementById('cursor-blur');
+    const cursor = document.getElementById('cursor-customizado');
+    const cursorDesfoque = document.getElementById('cursor-desfoque');
 
     document.addEventListener('mousemove', (e) => {
-        if (cursor && cursorBlur) {
+        if (cursor && cursorDesfoque) {
             cursor.style.left = e.clientX + 'px';
             cursor.style.top = e.clientY + 'px';
-            cursorBlur.style.left = (e.clientX - 16) + 'px';
-            cursorBlur.style.top = (e.clientY - 16) + 'px';
+            cursorDesfoque.style.left = (e.clientX - 16) + 'px';
+            cursorDesfoque.style.top = (e.clientY - 16) + 'px';
         }
     });
 
-    // 2. AUTHENTICATION LOGIC (Session-based)
-    const checkLogin = () => {
-        // Usamos sessionStorage para que o login expire ao fechar a aba/navegador
-        const isLoggedIn = sessionStorage.getItem('chromebeast_auth');
-        if (isLoggedIn) {
-            loginModal.style.display = 'none';
-            splash.classList.remove('hidden');
-            startIntro();
+    const interativos = document.querySelectorAll('button, a, .card-vidro, input, textarea');
+    interativos.forEach(el => {
+        el.addEventListener('mouseenter', () => {
+            cursor.style.transform = 'scale(2.5)';
+            cursorDesfoque.style.transform = 'scale(1.8)';
+            cursorDesfoque.style.borderColor = 'var(--rosa-ciber)';
+        });
+        el.addEventListener('mouseleave', () => {
+            cursor.style.transform = 'scale(1)';
+            cursorDesfoque.style.transform = 'scale(1)';
+            cursorDesfoque.style.borderColor = 'var(--neon-ciber)';
+        });
+    });
+
+    // 2. LÓGICA DE AUTENTICAÇÃO E CADASTRO
+    const abaEntrar = document.getElementById('aba-entrar');
+    const abaCadastrar = document.getElementById('aba-cadastrar');
+    const formEntrar = document.getElementById('form-entrar');
+    const formCadastrar = document.getElementById('form-cadastrar');
+    const botaoRegistrar = document.getElementById('botao-cadastrar');
+    const msgCadastro = document.getElementById('msg-cadastro');
+
+    abaEntrar.onclick = () => {
+        abaEntrar.classList.add('ativo');
+        abaCadastrar.classList.remove('ativo');
+        formEntrar.classList.remove('oculto');
+        formCadastrar.classList.add('oculto');
+    };
+
+    abaCadastrar.onclick = () => {
+        abaCadastrar.classList.add('ativo');
+        abaEntrar.classList.remove('ativo');
+        formCadastrar.classList.remove('oculto');
+        formEntrar.classList.add('oculto');
+    };
+
+    const verificarAutenticacao = () => {
+        const logado = sessionStorage.getItem('chromebeast_autenticado');
+        if (logado) {
+            modalAutenticacao.style.display = 'none';
+            splash.classList.remove('oculto');
+            iniciarBoot();
         }
     };
 
-    authBtn.onclick = () => {
-        const user = document.getElementById('login-user').value;
-        const pass = document.getElementById('login-pass').value;
-        const errorMsg = document.getElementById('login-error');
+    botaoRegistrar.onclick = () => {
+        const usuario = document.getElementById('cad-usuario').value;
+        const senha = document.getElementById('cad-senha').value;
+        const confirma = document.getElementById('cad-senha-confirma').value;
 
-        if(clickSound) {
-            clickSound.currentTime = 0;
-            clickSound.play().catch(() => {});
+        if (!usuario || !senha) {
+            msgCadastro.innerText = "ERRO: CAMPOS_VAZIOS";
+            msgCadastro.classList.remove('oculto');
+            return;
         }
 
-        if (user && pass) {
-            sessionStorage.setItem('chromebeast_auth', 'true');
-            loginModal.classList.add('fade-out');
+        if (senha !== confirma) {
+            msgCadastro.innerText = "ERRO: SENHAS_NÃO_CONFEREM";
+            msgCadastro.classList.remove('oculto');
+            return;
+        }
+
+        const usuarios = JSON.parse(localStorage.getItem('chromebeast_usuarios') || "[]");
+        if (usuarios.find(u => u.usuario === usuario)) {
+            msgCadastro.innerText = "ERRO: USUÁRIO_JÁ_EXISTE";
+            msgCadastro.classList.remove('oculto');
+            return;
+        }
+
+        usuarios.push({ usuario, senha });
+        localStorage.setItem('chromebeast_usuarios', JSON.stringify(usuarios));
+        msgCadastro.style.color = "#00ff88";
+        msgCadastro.innerText = "SUCESSO: IDENTIDADE_CRIADA. ENTRE_AGORA.";
+        msgCadastro.classList.remove('oculto');
+        setTimeout(() => abaEntrar.click(), 1500);
+    };
+
+    botaoAutenticar.onclick = () => {
+        const usuario = document.getElementById('login-usuario').value;
+        const senha = document.getElementById('login-senha').value;
+        const erroLogin = document.getElementById('erro-login');
+
+        const usuarios = JSON.parse(localStorage.getItem('chromebeast_usuarios') || "[]");
+        const encontrado = usuarios.find(u => u.usuario === usuario && u.senha === senha);
+
+        if (encontrado || (usuario === "admin" && senha === "admin")) {
+            sessionStorage.setItem('chromebeast_autenticado', 'true');
+            modalAutenticacao.classList.add('fade-out');
             setTimeout(() => {
-                loginModal.style.display = 'none';
-                splash.classList.remove('hidden');
-                startIntro();
+                modalAutenticacao.style.display = 'none';
+                splash.classList.remove('oculto');
+                iniciarBoot();
             }, 800);
         } else {
-            errorMsg.classList.remove('hidden');
-            setTimeout(() => errorMsg.classList.add('hidden'), 3000);
+            erroLogin.classList.remove('oculto');
+            setTimeout(() => erroLogin.classList.add('oculto'), 3000);
         }
     };
 
-    checkLogin();
+    verificarAutenticacao();
 
-    // 2.5 NAVIGATION SYSTEM (SPA style)
-    const sections = document.querySelectorAll('.content-section');
-    const navLinks = document.querySelectorAll('[data-nav-link]');
-    const internalBtns = document.querySelectorAll('.internal-btn');
+    // 3. SISTEMA DE NAVEGAÇÃO SPA
+    const secoes = document.querySelectorAll('.secao-conteudo');
+    const linksNav = document.querySelectorAll('[data-link-nav]');
+    const botoesInternos = document.querySelectorAll('.botao-interno');
 
-    function switchSection(targetId) {
-        const targetSection = document.getElementById(targetId);
-        if (!targetSection) return;
-
-        // Toca som de clique
-        if (clickSound) {
-            clickSound.currentTime = 0;
-            clickSound.play().catch(() => {});
-        }
-
-        // Remove classe ativa de todas
-        sections.forEach(s => s.classList.remove('active'));
-        
-        // Ativa a nova
-        targetSection.classList.add('active');
-
-        // Fecha menu mobile se existisse (opcional)
-        console.log(`[NAV] Switched to section: ${targetId}`);
+    function trocarSecao(idAlvo) {
+        const secaoAlvo = document.getElementById(idAlvo);
+        if (!secaoAlvo) return;
+        secoes.forEach(s => s.classList.remove('ativo'));
+        secaoAlvo.classList.add('ativo');
     }
 
-    navLinks.forEach(link => {
+    linksNav.forEach(link => {
         link.onclick = (e) => {
             const href = link.getAttribute('href');
-            if (href.startsWith('#')) {
+            if (href && href.startsWith('#')) {
                 e.preventDefault();
-                const id = href.substring(1);
-                switchSection(id);
+                trocarSecao(href.substring(1));
             }
         };
     });
 
-    internalBtns.forEach(btn => {
-        btn.onclick = () => {
-            const target = btn.getAttribute('data-target');
-            switchSection(target);
-        };
+    botoesInternos.forEach(btn => {
+        btn.onclick = () => trocarSecao(btn.getAttribute('data-alvo'));
     });
 
-    function startIntro() {
-        skipBtn.classList.remove('hidden'); 
-        const videoPromise = video ? video.play() : null;
-        if (videoPromise !== undefined) {
-            videoPromise.catch(error => {
-                console.log("Video autoplay blocked, jumping to boot.");
-                startBootSequence();
-            });
-        }
-    }
+    let intervaloBios;
 
-    let biosInterval;
-
-    // 3. SEQUÊNCIA DE BOOT (BIOS)
-    function startBootSequence() {
-        if (video) {
-            video.pause();
-            video.style.display = 'none';
-        }
-        // O botão skip continua visível aqui
+    function iniciarBoot() {
         terminal.style.display = 'flex'; 
+        terminal.style.opacity = '1';
+        splash.style.opacity = '1';
+        splash.classList.remove('oculto');
+        botaoPular.classList.remove('oculto');
 
-        const logMessages = [
-            " [!] SYSTEM_BOT: ACTIVE",
-            ">> DECRYPTING_GOTHIC_CORE... [100%]",
-            ">> LOADING_NEON_ASSETS... [DONE]",
-            ">> SYNCING_USER_INTERFACE... [OK]",
-            ">> BYPASSING_SECURITY_PROTOCOLS...",
-            ">> ESTABLISHING_NEURAL_LINK... [STABLE]",
-            ">> LOADING_GAMES_DATABASE... [OK]",
-            ">> OPTIMIZING_VISUAL_RENDERER...",
-            ">> SYSTEM_READY_FOR_OPERATOR.",
-            ">> WELCOME_TO_CHROMEBEAST."
+        const mensagensLog = [
+            " [!] ROBÔ_DO_SISTEMA: ATIVO",
+            ">> DESCRIPTOGRAFANDO_NÚCLEO_GÓTICO... [100%]",
+            ">> CARREGANDO_RECURSOS_NEON... [OK]",
+            ">> SINCRONIZANDO_INTERFACE_DO_USUÁRIO... [OK]",
+            ">> IGNORANDO_PROTOCOLOS_DE_SEGURANÇA...",
+            ">> ESTABELECENDO_LINK_NEURAL... [ESTÁVEL]",
+            ">> CARREGANDO_BANCO_DE_DADOS_DE_JOGOS... [OK]",
+            ">> SISTEMA_PRONTO.",
+            ">> BEM-VINDO_AO_CHROMEBEAST."
         ];
 
-        let logIndex = 0;
-        biosInterval = setInterval(() => {
-            if (logIndex < logMessages.length) {
-                const line = document.createElement('div');
-                line.className = 'log-line';
-                if (logIndex === 0) line.classList.add('highlight');
-                line.innerText = logMessages[logIndex];
-                terminal.appendChild(line);
-                logIndex++;
+        let indexLog = 0;
+        intervaloBios = setInterval(() => {
+            if (indexLog < mensagensLog.length) {
+                const linha = document.createElement('div');
+                linha.className = 'log-line';
+                if (indexLog === 0) linha.classList.add('highlight');
+                linha.innerText = mensagensLog[indexLog];
+                terminal.appendChild(linha);
+                indexLog++;
             } else {
-                clearInterval(biosInterval);
+                clearInterval(intervaloBios);
                 setTimeout(() => {
                     terminal.style.opacity = '0';
-                    setTimeout(triggerFinalReveal, 500);
+                    setTimeout(revelacaoFinal, 600);
                 }, 1000);
             }
         }, 200);
     }
 
-    const skipIntro = () => {
-        if (video) video.pause();
-        if (biosInterval) clearInterval(biosInterval); // Para a BIOS se estiver rodando
-        triggerFinalReveal();
+    const pularIntro = () => {
+        if (intervaloBios) clearInterval(intervaloBios);
+        terminal.style.opacity = '0';
+        revelacaoFinal();
     };
 
-    skipBtn.onclick = skipIntro;
+    botaoPular.onclick = pularIntro;
     document.addEventListener('keydown', (e) => {
-        if (e.key === "Escape" && !splash.classList.contains('hidden')) {
-            skipIntro();
-        }
+        if (e.key === "Escape" && !splash.classList.contains('oculto')) pularIntro();
     });
 
-    if (video) {
-        video.onended = () => startBootSequence();
-    }
-
-    navLinks.forEach((link) => {
-        link.addEventListener('click', () => {
-            if (clickSound) {
-                clickSound.currentTime = 0;
-                clickSound.play().catch(() => {});
-            }
-        });
-    });
-
-    if (playCard) {
-        playCard.addEventListener('click', (event) => {
-            event.preventDefault();
-            const formMsg = document.getElementById('form-msg');
-            if (formMsg) {
-                formMsg.style.color = 'var(--cyber-neon)';
-                formMsg.innerText = 'INFO: GAME_MODULE_NOT_INSTALLED.';
-            }
-        });
-    }
-
-    galleryItems.forEach((item, index) => {
-        item.addEventListener('click', () => {
-            const formMsg = document.getElementById('form-msg');
-            if (formMsg) {
-                formMsg.style.color = 'var(--cyber-neon)';
-                formMsg.innerText = `INFO: GALLERY_ASSET_${index + 1}_PENDING_UPLOAD.`;
-            }
-        });
-    });
-
-    function triggerFinalReveal() {
-        // Limpeza absoluta de elementos da intro
-        if (video) video.style.display = 'none';
-        if (terminal) terminal.style.display = 'none';
-        if (skipBtn) skipBtn.style.display = 'none';
-        
-        if(bgMusic) {
-            bgMusic.volume = 0.3;
-            bgMusic.play().catch(e => console.log("Background music blocked."));
-        }
-
-        body.classList.add('glitch-active');
+    function revelacaoFinal() {
+        splash.style.opacity = '0'; // FAZ O FUNDO PRETO SUMIR
         setTimeout(() => {
-            body.classList.remove('glitch-active');
-            splash.classList.add('fade-out');
-            setTimeout(() => {
-                splash.classList.add('hidden');
-                mainContent.classList.remove('hidden');
-                nav.classList.remove('hidden');
-                document.getElementById('scroll-arrows').classList.remove('hidden');
-                
-                initSpaceship();
-            }, 800);
-        }, 200);
+            splash.classList.add('oculto');
+            terminal.style.display = 'none';
+            botaoPular.style.display = 'none';
+            
+            conteudoPrincipal.classList.remove('oculto');
+            nav.classList.remove('oculto');
+            iniciarNave();
+        }, 800);
+
+        corpo.classList.add('glitch-active');
+        setTimeout(() => corpo.classList.remove('glitch-active'), 500);
     }
 
-    // 6. SPACESHIP DRONE LOGIC (GSAP)
-    function initSpaceship() {
-        const shipContainer = document.getElementById('spaceship-container');
-        const ship = document.getElementById('spaceship-drone');
-        if (!ship || !shipContainer) return;
+    function iniciarNave() {
+        const containerNave = document.getElementById('container-nave');
+        const nave = document.getElementById('drone-nave');
+        if (!nave || !containerNave) return;
 
-        shipContainer.classList.remove('hidden');
-        
-        // Posição inicial fora da tela
-        gsap.set(ship, { x: -100, y: window.innerHeight / 2, rotation: 90 });
+        containerNave.classList.remove('oculto');
+        gsap.set(nave, { x: -100, y: window.innerHeight / 2, rotation: 90 });
 
-        function moveShip() {
-            const newX = Math.random() * (window.innerWidth - 100);
-            const newY = Math.random() * (window.innerHeight - 100);
-            
-            // Calcula o ângulo para a nave "olhar" para o destino
-            const currentX = gsap.getProperty(ship, "x");
-            const currentY = gsap.getProperty(ship, "y");
-            const angle = Math.atan2(newY - currentY, newX - currentX) * (180 / Math.PI);
+        function moverNave() {
+            const novoX = Math.random() * (window.innerWidth - 100);
+            const novoY = Math.random() * (window.innerHeight - 100);
+            const atualX = gsap.getProperty(nave, "x");
+            const atualY = gsap.getProperty(nave, "y");
+            const angulo = Math.atan2(novoY - atualY, novoX - atualX) * (180 / Math.PI);
 
-            // Timeline para rotação e movimento
-            const tl = gsap.timeline({ onComplete: moveShip });
-            
-            tl.to(ship, {
-                rotation: angle + 90, // +90 porque a imagem costuma estar virada para cima
-                duration: 1,
-                ease: "power2.inOut"
-            })
-            .to(ship, {
-                x: newX,
-                y: newY,
-                duration: Math.random() * 3 + 4, // Entre 4 e 7 segundos para suavidade
-                ease: "sine.inOut"
-            }, "-=0.5"); // Começa a mover um pouco antes de terminar de rotacionar
+            const tl = gsap.timeline({ onComplete: moverNave });
+            tl.to(nave, { rotation: angulo + 90, duration: 1, ease: "power2.inOut" })
+              .to(nave, { x: novoX, y: novoY, duration: Math.random() * 3 + 4, ease: "sine.inOut" }, "-=0.5");
         }
 
-        // Efeito de flutuação constante (Hovering)
-        gsap.to(ship, {
-            y: "+=20",
-            repeat: -1,
-            yoyo: true,
-            duration: 2,
-            ease: "sine.inOut"
-        });
-
-        moveShip();
+        gsap.to(nave, { y: "+=20", repeat: -1, yoyo: true, duration: 2, ease: "sine.inOut" });
+        moverNave();
     }
 
-    // 4. CONTACT FORM
-    const contactForm = document.getElementById('contact-form');
-    const formMsg = document.getElementById('form-msg');
+    // 4. FORMULÁRIO DE CONTATO
+    const formularioContato = document.getElementById('formulario-contato');
+    const msgFormulario = document.getElementById('msg-formulario');
 
-    if (contactForm) {
-        contactForm.onsubmit = async (e) => {
+    if (formularioContato) {
+        formularioContato.onsubmit = async (e) => {
             e.preventDefault();
-            formMsg.innerText = ">> TRANSMITTING_SIGNAL_";
+            msgFormulario.innerText = ">> TRANSMITINDO_SINAL_";
             
-            const data = {
-                name: document.getElementById('contact-name').value,
-                email: document.getElementById('contact-email').value,
-                message: document.getElementById('contact-message').value,
-                timestamp: new Date().toISOString()
+            const dados = {
+                nome: document.getElementById('contato-nome').value,
+                email: document.getElementById('contato-email').value,
+                mensagem: document.getElementById('contato-mensagem').value,
+                data_hora: new Date().toISOString()
             };
 
             try {
-                await api.sendContact(data);
-                formMsg.style.color = "#00ff88";
-                formMsg.innerText = "SUCCESS: SIGNAL_STORED.";
-                contactForm.reset();
-            } catch (err) {
-                formMsg.style.color = "var(--cyber-pink)";
-                formMsg.innerText = `ERROR: ${err.message || 'SIGNAL_TRANSMISSION_FAILED'}.`;
+                await api.enviarContato(dados);
+                msgFormulario.style.color = "#00ff88";
+                msgFormulario.innerText = "SUCESSO: SINAL_ARMAZENADO.";
+                formularioContato.reset();
+            } catch (erro) {
+                msgFormulario.style.color = "var(--rosa-ciber)";
+                msgFormulario.innerText = `ERRO: ${erro.message || 'FALHA_NA_TRANSMISSÃO'}.`;
             }
         };
     }
-
-    // 5. PROFESSIONAL UX ENHANCEMENTS (Scroll & Reveal)
-    const scrollProgress = document.getElementById('scroll-progress');
-    const scrollDown = document.getElementById('scroll-down');
-    const scrollUp = document.getElementById('scroll-up');
-    const sections = document.querySelectorAll('section');
-
-    // Reveal on Scroll
-    const revealObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('active');
-            }
-        });
-    }, { threshold: 0.1 });
-
-    sections.forEach(section => {
-        section.classList.add('reveal');
-        revealObserver.observe(section);
-    });
-
-    window.addEventListener('scroll', () => {
-        const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
-        const progress = (window.scrollY / totalHeight) * 100;
-        
-        if (scrollProgress) {
-            scrollProgress.style.width = `${progress}%`;
-        }
-
-        // Toggle Nav Background
-        if (window.scrollY > 50) {
-            nav.classList.add('scrolled');
-        } else {
-            nav.classList.remove('scrolled');
-        }
-
-        // Arrow Visibility Logic
-        if (progress > 80) {
-            scrollDown.classList.add('hidden');
-            scrollUp.classList.remove('hidden');
-        } else if (progress < 10) {
-            scrollDown.classList.remove('hidden');
-            scrollUp.classList.add('hidden');
-        } else {
-            scrollDown.classList.remove('hidden');
-            scrollUp.classList.remove('hidden');
-        }
-    });
-
-    // Arrow Click Events
-    scrollDown.onclick = () => {
-        const nextSection = Array.from(sections).find(s => s.getBoundingClientRect().top > 10);
-        if (nextSection) {
-            nextSection.scrollIntoView({ behavior: 'smooth' });
-        }
-    };
-
-    scrollUp.onclick = () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-
-    // Cursor Interactions
-    const interactiveElements = document.querySelectorAll('a, button, .glass-card, .scroll-arrow');
-    interactiveElements.forEach(el => {
-        el.addEventListener('mouseenter', () => {
-            cursor.style.transform = 'scale(2)';
-            cursorBlur.style.transform = 'scale(1.5)';
-            cursorBlur.style.borderColor = 'var(--cyber-pink)';
-        });
-        el.addEventListener('mouseleave', () => {
-            cursor.style.transform = 'scale(1)';
-            cursorBlur.style.transform = 'scale(1)';
-            cursorBlur.style.borderColor = 'var(--cyber-neon)';
-        });
-    });
 });
