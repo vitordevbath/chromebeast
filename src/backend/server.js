@@ -1,14 +1,14 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const Database = require('better-sqlite3');
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcryptjs');
 const path = require('path');
-const fs = require('fs');
+const { createStore } = require('./database');
 
 const app = express();
-const PORTA = 3000;
+const PORTA = Number(process.env.PORT || 3000);
+const HOST = process.env.HOST || '0.0.0.0';
 const LIMITE_TENTATIVAS_LOGIN = 5;
 const JANELA_BLOQUEIO_MINUTOS = 15;
 const CODIGO_EXPIRA_MINUTOS = 15;
@@ -18,50 +18,15 @@ app.use(express.json());
 
 const frontendPath = path.join(__dirname, '..', 'frontend');
 app.use(express.static(frontendPath));
+const store = createStore();
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
-const dataDir = path.join(__dirname, 'data');
-fs.mkdirSync(dataDir, { recursive: true });
-
-const db = new Database(path.join(dataDir, 'starcore.db'));
-
-db.exec(`
-  CREATE TABLE IF NOT EXISTS usuarios (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    usuario TEXT UNIQUE,
-    email TEXT UNIQUE,
-    senha TEXT,
-    codigo_verificacao TEXT,
-    verificado INTEGER DEFAULT 0
-  );
-
-  CREATE TABLE IF NOT EXISTS mensagens (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nome TEXT,
-    email TEXT,
-    mensagem TEXT,
-    data_hora DATETIME DEFAULT CURRENT_TIMESTAMP
-  );
-`);
-
-function ensureColumn(tableName, columnName, definition) {
-    const columns = db.prepare(`PRAGMA table_info(${tableName})`).all();
-    const exists = columns.some((column) => column.name === columnName);
-
-    if (!exists) {
-        db.exec(`ALTER TABLE ${tableName} ADD COLUMN ${columnName} ${definition}`);
-    }
-}
-
-ensureColumn('usuarios', 'codigo_verificacao_expira_em', 'TEXT');
-ensureColumn('usuarios', 'reset_codigo', 'TEXT');
-ensureColumn('usuarios', 'reset_expira_em', 'TEXT');
-ensureColumn('usuarios', 'tentativas_login', 'INTEGER DEFAULT 0');
-ensureColumn('usuarios', 'bloqueado_ate', 'TEXT');
-ensureColumn('usuarios', 'ultima_atividade', 'TEXT');
+app.get('/health', (req, res) => {
+    res.send({ status: 'ok', host: HOST, port: PORTA, banco: store.mode });
+});
 
 const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST || 'smtp.gmail.com',
@@ -185,12 +150,7 @@ app.post('/api/auth/registrar', async (req, res) => {
     const hashSenha = await bcrypt.hash(senha, 10);
 
     try {
-        db.prepare(`
-            INSERT INTO usuarios (
-                usuario, email, senha, codigo_verificacao, codigo_verificacao_expira_em,
-                verificado, tentativas_login, bloqueado_ate, ultima_atividade
-            ) VALUES (?, ?, ?, ?, ?, 0, 0, NULL, NULL)
-        `).run(usuario, email, hashSenha, codigo, codigoExpiraEm);
+        await store.createUser({ usuario, email, senhaHash: hashSenha, codigo, codigoExpiraEm });
 
         await enviarEmailCodigo({
             destino: email,
@@ -209,14 +169,11 @@ app.post('/api/auth/registrar', async (req, res) => {
     }
 });
 
-app.post('/api/auth/verificar', (req, res) => {
+app.post('/api/auth/verificar', async (req, res) => {
     const email = normalizeEmail(req.body.email);
     const codigo = String(req.body.codigo || '').trim();
 
-    const user = db.prepare(`
-        SELECT * FROM usuarios
-        WHERE email = ? AND codigo_verificacao = ?
-    `).get(email, codigo);
+    const user = await store.findUserByVerification(email, codigo);
 
     if (!user) {
         return jsonError(res, 401, 'CODIGO_INVALIDO');
@@ -226,13 +183,7 @@ app.post('/api/auth/verificar', (req, res) => {
         return jsonError(res, 410, 'CODIGO_EXPIRADO');
     }
 
-    db.prepare(`
-        UPDATE usuarios
-        SET verificado = 1,
-            codigo_verificacao = NULL,
-            codigo_verificacao_expira_em = NULL
-        WHERE id = ?
-    `).run(user.id);
+    await store.verifyUser(user.id);
 
     return res.send({ mensagem: 'IDENTIDADE_VALIDADA' });
 });
@@ -244,7 +195,7 @@ app.post('/api/auth/esqueci-senha', async (req, res) => {
         return jsonError(res, 400, 'EMAIL_INVALIDO');
     }
 
-    const user = db.prepare('SELECT * FROM usuarios WHERE email = ?').get(email);
+    const user = await store.findUserByEmail(email);
 
     if (!user || !user.verificado) {
         return res.send({ mensagem: 'SE_O_EMAIL_EXISTIR_UM_CODIGO_SERA_ENVIADO' });
@@ -253,11 +204,7 @@ app.post('/api/auth/esqueci-senha', async (req, res) => {
     const codigo = gerarCodigoNumerico();
     const expiraEm = gerarExpiracaoIso(CODIGO_EXPIRA_MINUTOS);
 
-    db.prepare(`
-        UPDATE usuarios
-        SET reset_codigo = ?, reset_expira_em = ?
-        WHERE id = ?
-    `).run(codigo, expiraEm, user.id);
+    await store.storeResetCode(user.id, codigo, expiraEm);
 
     await enviarEmailCodigo({
         destino: email,
@@ -287,10 +234,7 @@ app.post('/api/auth/redefinir-senha', async (req, res) => {
         return jsonError(res, 400, erroSenha);
     }
 
-    const user = db.prepare(`
-        SELECT * FROM usuarios
-        WHERE email = ? AND reset_codigo = ?
-    `).get(email, codigo);
+    const user = await store.findUserByReset(email, codigo);
 
     if (!user) {
         return jsonError(res, 401, 'CODIGO_RESET_INVALIDO');
@@ -302,16 +246,7 @@ app.post('/api/auth/redefinir-senha', async (req, res) => {
 
     const hashSenha = await bcrypt.hash(novaSenha, 10);
 
-    db.prepare(`
-        UPDATE usuarios
-        SET senha = ?,
-            reset_codigo = NULL,
-            reset_expira_em = NULL,
-            tentativas_login = 0,
-            bloqueado_ate = NULL,
-            ultima_atividade = ?
-        WHERE id = ?
-    `).run(hashSenha, new Date().toISOString(), user.id);
+    await store.updatePasswordAfterReset(user.id, hashSenha, new Date().toISOString());
 
     return res.send({ mensagem: 'SENHA_ATUALIZADA_COM_SUCESSO' });
 });
@@ -324,10 +259,7 @@ app.post('/api/auth/login', async (req, res) => {
         return jsonError(res, 400, 'DADOS_INCOMPLETOS');
     }
 
-    const user = db.prepare(`
-        SELECT * FROM usuarios
-        WHERE usuario = ? OR email = ?
-    `).get(identificador, normalizeEmail(identificador));
+    const user = await store.findUserByIdentifier(identificador, normalizeEmail(identificador));
 
     if (!user) {
         return jsonError(res, 401, 'CREDENCIAIS_INVALIDAS');
@@ -346,12 +278,7 @@ app.post('/api/auth/login', async (req, res) => {
         const excedeuLimite = tentativas >= LIMITE_TENTATIVAS_LOGIN;
         const bloqueadoAte = excedeuLimite ? gerarExpiracaoIso(JANELA_BLOQUEIO_MINUTOS) : null;
 
-        db.prepare(`
-            UPDATE usuarios
-            SET tentativas_login = ?,
-                bloqueado_ate = ?
-            WHERE id = ?
-        `).run(excedeuLimite ? 0 : tentativas, bloqueadoAte, user.id);
+        await store.recordLoginFailure(user.id, excedeuLimite ? 0 : tentativas, bloqueadoAte);
 
         return jsonError(
             res,
@@ -365,13 +292,7 @@ app.post('/api/auth/login', async (req, res) => {
         return jsonError(res, 403, 'CONTA_NAO_VERIFICADA');
     }
 
-    db.prepare(`
-        UPDATE usuarios
-        SET tentativas_login = 0,
-            bloqueado_ate = NULL,
-            ultima_atividade = ?
-        WHERE id = ?
-    `).run(new Date().toISOString(), user.id);
+    await store.recordLoginSuccess(user.id, new Date().toISOString());
 
     return res.send({ mensagem: 'ACESSO_LIBERADO', usuario: user.usuario });
 });
@@ -388,7 +309,7 @@ function verificarAdmin(req, res, next) {
     return jsonError(res, 403, 'ACESSO_NEGADO_TOKEN_INVALIDO');
 }
 
-app.post('/api/contato', (req, res) => {
+app.post('/api/contato', async (req, res) => {
     const nome = String(req.body.nome || '').trim();
     const email = normalizeEmail(req.body.email);
     const mensagem = String(req.body.mensagem || '').trim();
@@ -402,27 +323,38 @@ app.post('/api/contato', (req, res) => {
     }
 
     try {
-        db.prepare('INSERT INTO mensagens (nome, email, mensagem) VALUES (?, ?, ?)').run(nome, email, mensagem);
+        await store.createMessage({ nome, email, mensagem });
         return res.status(201).send({ mensagem: 'SINAL_ARMAZENADO_NO_NUCLEO_SQL' });
     } catch (error) {
         return jsonError(res, 500, 'FALHA_AO_GRAVAR_SQL');
     }
 });
 
-app.get('/api/mensagens', verificarAdmin, (req, res) => {
-    const dados = db.prepare('SELECT * FROM mensagens ORDER BY data_hora DESC').all();
+app.get('/api/mensagens', verificarAdmin, async (req, res) => {
+    const dados = await store.listMessages();
     res.send(dados);
 });
 
-app.delete('/api/mensagens/:id', verificarAdmin, (req, res) => {
-    db.prepare('DELETE FROM mensagens WHERE id = ?').run(req.params.id);
+app.delete('/api/mensagens/:id', verificarAdmin, async (req, res) => {
+    await store.deleteMessage(req.params.id);
     res.send({ mensagem: 'SINAL_PURGADO' });
 });
 
-app.listen(PORTA, () => {
-    console.log('==========================================');
-    console.log('[STARCORE SENTINEL] NUCLEO LOCAL SQLITE ATIVO');
-    console.log(`[BANCO] db: starcore.db | [PORTA] ${PORTA}`);
-    console.log('[OPERADOR] BAT ENTERPRISE');
-    console.log('==========================================');
+async function start() {
+    await store.init();
+
+    app.listen(PORTA, HOST, () => {
+        const banco = store.mode === 'postgres' ? 'POSTGRES REMOTO' : 'SQLITE LOCAL';
+
+        console.log('==========================================');
+        console.log(`[STARCORE SENTINEL] NUCLEO ${banco} ATIVO`);
+        console.log(`[HOST] ${HOST} | [PORTA] ${PORTA}`);
+        console.log('[OPERADOR] BAT ENTERPRISE');
+        console.log('==========================================');
+    });
+}
+
+start().catch((error) => {
+    console.error('[FALHA_STARTUP]', error);
+    process.exit(1);
 });

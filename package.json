@@ -1,0 +1,11 @@
+{
+  "name": "starcore-sentinel-monorepo",
+  "private": true,
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "npm install --prefix src/backend",
+    "start": "node src/backend/server.js"
+  }
+}
