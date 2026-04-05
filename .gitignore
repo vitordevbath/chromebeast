@@ -11,6 +11,7 @@ obj/
 node_modules/
 npm-debug.log
 .env
+runtime/
 
 # Banco de dados e dados sensiveis
 *.db

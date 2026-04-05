@@ -15,14 +15,11 @@ Landing page com painel admin, backend local em Express + SQLite, launcher em .N
 
 Execute o launcher `dist\ChromebeastLauncher.exe`.
 
-Esse executável:
+Esse executável único:
 
-- verifica `node` e `npm`
-- instala as dependências do backend quando necessário
+- embute backend, frontend e runtime local do Node
 - sobe o servidor local
 - abre `http://localhost:3000`
-
-Requisito: o `Node.js` precisa estar instalado na máquina.
 
 ### Fallback
 
@@ -41,18 +38,21 @@ Depois abra `http://localhost:3000`.
 
 ## Gerar Pacote EXE
 
-Para publicar novamente o launcher e montar um pacote local com `backend` e `frontend` ao lado do executável:
+Para publicar novamente o launcher único:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\publish-launcher.ps1
 ```
 
+Pré-requisito para publicar:
+
+- Node.js instalado localmente
+- Visual Studio 2026 / SDK .NET compatível com o projeto
+
 Saídas geradas localmente:
 
 - `dist\ChromebeastLauncher.exe`
-- `dist\app\ChromebeastLauncher.exe`
-- `dist\app\backend\...`
-- `dist\app\frontend\...`
+- `dist\launcher-exe\...`
 
 ## Sistema de Contas
 

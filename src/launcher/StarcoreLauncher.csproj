@@ -12,6 +12,24 @@
     <PublishSingleFile>true</PublishSingleFile>
     <SelfContained>true</SelfContained>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
   </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="..\backend\**\*"
+                      Exclude="..\backend\data\**\*;..\backend\.env">
+      <LogicalName>ChromebeastPayload/backend/%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+
+    <EmbeddedResource Include="..\frontend\**\*"
+                      Exclude="..\frontend\node_modules\**\*">
+      <LogicalName>ChromebeastPayload/frontend/%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+
+    <EmbeddedResource Include="..\..\runtime\node\node.exe"
+                      Condition="Exists('..\..\runtime\node\node.exe')">
+      <LogicalName>ChromebeastPayload/runtime/node.exe</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
 
 </Project>

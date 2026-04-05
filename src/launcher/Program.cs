@@ -1,6 +1,8 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Threading;
 
 namespace ChromebeastLauncher;
@@ -11,17 +13,20 @@ internal sealed class AppLayout
     public required string BackendPath { get; init; }
     public required string FrontendPath { get; init; }
     public required bool IsPackagedLayout { get; init; }
+    public string? BundledNodePath { get; init; }
 }
 
 class Program
 {
+    private const string PayloadPrefix = "ChromebeastPayload/";
+
     static void Main(string[] args)
     {
         Console.Title = "CHROMEBEAST | BAT ENTERPRISE";
         Console.ForegroundColor = ConsoleColor.Magenta;
 
         string basePath = AppDomain.CurrentDomain.BaseDirectory;
-        AppLayout? layout = FindAppLayout(basePath);
+        AppLayout? layout = FindDevelopmentLayout(basePath) ?? ExtractEmbeddedLayout();
 
         Console.WriteLine("==================================================");
         Console.WriteLine("          CHROMEBEAST - BOOT SEQUENCE");
@@ -31,44 +36,41 @@ class Program
         if (layout == null)
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("\n[ERRO FATAL] DIRETORIO DO SISTEMA NAO ENCONTRADO.");
-            Console.WriteLine("NAO FOI POSSIVEL LOCALIZAR A ESTRUTURA DO APP.");
-            Console.WriteLine("LOCAL ATUAL: " + basePath);
-            Console.WriteLine("\nO LANCADOR ESPERA UMA DESTAS ESTRUTURAS:");
-            Console.WriteLine("- desenvolvimento: src\\backend e src\\frontend");
-            Console.WriteLine("- pacote: backend e frontend ao lado do .exe");
+            Console.WriteLine("\n[ERRO FATAL] ESTRUTURA DO SISTEMA NAO ENCONTRADA.");
+            Console.WriteLine("Nao foi possivel localizar nem extrair o pacote do app.");
             Console.ReadKey();
             return;
         }
 
-        string? nodeCommand = ResolveNodeCommand(layout.RootPath);
-        string? npmCommand = ResolveNpmCommand(layout.RootPath);
+        string? nodeCommand = ResolveNodeCommand(layout);
+        string? npmCommand = ResolveNpmCommand();
 
         if (nodeCommand == null)
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("\n[ERRO] NODE.JS NAO ENCONTRADO.");
-            Console.WriteLine("Instale Node.js ou coloque um runtime local em runtime\\node\\node.exe.");
-            Console.ReadKey();
-            return;
-        }
-
-        if (npmCommand == null)
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("\n[ERRO] NPM NAO ENCONTRADO.");
-            Console.WriteLine("Instale Node.js completo ou forneca runtime\\node\\npm.cmd.");
+            Console.WriteLine("O executavel nao encontrou nem o runtime embutido nem uma instalacao local.");
             Console.ReadKey();
             return;
         }
 
         Console.ForegroundColor = ConsoleColor.DarkGray;
-        Console.WriteLine($"\n[LAYOUT] {(layout.IsPackagedLayout ? "PACOTE" : "DESENVOLVIMENTO")}");
+        Console.WriteLine($"\n[LAYOUT] {(layout.IsPackagedLayout ? "EMBUTIDO" : "DESENVOLVIMENTO")}");
         Console.WriteLine($"[ROOT] {layout.RootPath}");
         Console.WriteLine($"[BACKEND] {layout.BackendPath}");
 
-        if (!Directory.Exists(Path.Combine(layout.BackendPath, "node_modules")))
+        bool hasNodeModules = Directory.Exists(Path.Combine(layout.BackendPath, "node_modules"));
+        if (!hasNodeModules)
         {
+            if (npmCommand == null)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("\n[ERRO] DEPENDENCIAS DO BACKEND AUSENTES E NPM INDISPONIVEL.");
+                Console.WriteLine("Instale o Node.js ou publique novamente o launcher com os modulos embutidos.");
+                Console.ReadKey();
+                return;
+            }
+
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("\n[!] INSTALANDO DEPENDENCIAS DO NUCLEO...");
             RunCommand(npmCommand, "install", layout.BackendPath);
@@ -94,7 +96,7 @@ class Program
         }
     }
 
-    static AppLayout? FindAppLayout(string startPath)
+    static AppLayout? FindDevelopmentLayout(string startPath)
     {
         string? current = startPath;
 
@@ -110,21 +112,8 @@ class Program
                     RootPath = current,
                     BackendPath = srcBackend,
                     FrontendPath = srcFrontend,
-                    IsPackagedLayout = false
-                };
-            }
-
-            string packagedBackend = Path.Combine(current, "backend");
-            string packagedFrontend = Path.Combine(current, "frontend");
-
-            if (Directory.Exists(packagedBackend) && Directory.Exists(packagedFrontend))
-            {
-                return new AppLayout
-                {
-                    RootPath = current,
-                    BackendPath = packagedBackend,
-                    FrontendPath = packagedFrontend,
-                    IsPackagedLayout = true
+                    IsPackagedLayout = false,
+                    BundledNodePath = null
                 };
             }
 
@@ -134,25 +123,70 @@ class Program
         return null;
     }
 
-    static string? ResolveNodeCommand(string rootPath)
+    static AppLayout? ExtractEmbeddedLayout()
     {
-        string localNode = Path.Combine(rootPath, "runtime", "node", "node.exe");
-        if (File.Exists(localNode))
+        var assembly = Assembly.GetExecutingAssembly();
+        var resourceNames = assembly.GetManifestResourceNames()
+            .Where((name) => name.StartsWith(PayloadPrefix, StringComparison.Ordinal))
+            .ToArray();
+
+        if (resourceNames.Length == 0)
         {
-            return localNode;
+            return null;
+        }
+
+        string extractionRoot = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "Chromebeast",
+            "runtime");
+
+        Directory.CreateDirectory(extractionRoot);
+
+        foreach (string resourceName in resourceNames)
+        {
+            string relativePath = resourceName.Substring(PayloadPrefix.Length)
+                .Replace('/', Path.DirectorySeparatorChar);
+
+            string outputPath = Path.Combine(extractionRoot, relativePath);
+            string? outputDir = Path.GetDirectoryName(outputPath);
+
+            if (!string.IsNullOrEmpty(outputDir))
+            {
+                Directory.CreateDirectory(outputDir);
+            }
+
+            using Stream? input = assembly.GetManifestResourceStream(resourceName);
+            if (input == null)
+            {
+                continue;
+            }
+
+            using FileStream output = new FileStream(outputPath, FileMode.Create, FileAccess.Write, FileShare.Read);
+            input.CopyTo(output);
+        }
+
+        return new AppLayout
+        {
+            RootPath = extractionRoot,
+            BackendPath = Path.Combine(extractionRoot, "backend"),
+            FrontendPath = Path.Combine(extractionRoot, "frontend"),
+            IsPackagedLayout = true,
+            BundledNodePath = Path.Combine(extractionRoot, "runtime", "node.exe")
+        };
+    }
+
+    static string? ResolveNodeCommand(AppLayout layout)
+    {
+        if (!string.IsNullOrWhiteSpace(layout.BundledNodePath) && File.Exists(layout.BundledNodePath))
+        {
+            return layout.BundledNodePath;
         }
 
         return IsCommandAvailable("node") ? "node" : null;
     }
 
-    static string? ResolveNpmCommand(string rootPath)
+    static string? ResolveNpmCommand()
     {
-        string localNpmCmd = Path.Combine(rootPath, "runtime", "node", "npm.cmd");
-        if (File.Exists(localNpmCmd))
-        {
-            return localNpmCmd;
-        }
-
         return IsCommandAvailable("npm") ? "npm" : null;
     }
 
