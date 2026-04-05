@@ -1,4 +1,4 @@
-# Chromebeast
+# Starcore Sentinel
 
 Landing page com painel admin, backend local em Express + SQLite, launcher em .NET e suporte parcial de deploy com Netlify Functions + Neon/Drizzle.
 
@@ -13,7 +13,7 @@ Landing page com painel admin, backend local em Express + SQLite, launcher em .N
 
 ### Opção rápida
 
-Execute o launcher `dist\ChromebeastLauncher.exe`.
+Execute o launcher `dist\StarcoreLauncher.exe`.
 
 Esse executável único:
 
@@ -51,7 +51,7 @@ Pré-requisito para publicar:
 
 Saídas geradas localmente:
 
-- `dist\ChromebeastLauncher.exe`
+- `dist\StarcoreLauncher.exe`
 - `dist\launcher-exe\...`
 
 ## Sistema de Contas

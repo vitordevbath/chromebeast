@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 
-namespace ChromebeastLauncher;
+namespace StarcoreLauncher;
 
 internal sealed class AppLayout
 {
@@ -18,18 +18,18 @@ internal sealed class AppLayout
 
 class Program
 {
-    private const string PayloadPrefix = "ChromebeastPayload/";
+    private const string PayloadPrefix = "StarcorePayload/";
 
     static void Main(string[] args)
     {
-        Console.Title = "CHROMEBEAST | BAT ENTERPRISE";
+        Console.Title = "STARCORE SENTINEL | BAT ENTERPRISE";
         Console.ForegroundColor = ConsoleColor.Magenta;
 
         string basePath = AppDomain.CurrentDomain.BaseDirectory;
         AppLayout? layout = FindDevelopmentLayout(basePath) ?? ExtractEmbeddedLayout();
 
         Console.WriteLine("==================================================");
-        Console.WriteLine("          CHROMEBEAST - BOOT SEQUENCE");
+        Console.WriteLine("        STARCORE SENTINEL - BOOT SEQUENCE");
         Console.WriteLine("          DEVELOPED BY BAT ENTERPRISE");
         Console.WriteLine("==================================================");
 
@@ -137,7 +137,7 @@ class Program
 
         string extractionRoot = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "Chromebeast",
+            "StarcoreSentinel",
             "runtime");
 
         Directory.CreateDirectory(extractionRoot);

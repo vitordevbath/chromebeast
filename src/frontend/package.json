@@ -1,5 +1,5 @@
 {
-  "name": "chromebeast-frontend",
+  "name": "starcore-sentinel-frontend",
   "version": "1.0.0",
   "dependencies": {
     "@netlify/neon": "^0.1.2",

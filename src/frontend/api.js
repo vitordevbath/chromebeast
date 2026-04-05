@@ -1,5 +1,5 @@
 (() => {
-    const ADMIN_TOKEN_STORAGE_KEY = 'chromebeast_admin_token';
+    const ADMIN_TOKEN_STORAGE_KEY = 'starcore_sentinel_admin_token';
 
     function resolveBaseApi() {
         const { protocol, hostname, port } = window.location;
@@ -50,7 +50,7 @@
         return dados;
     }
 
-    window.ApiChromebeast = {
+    window.ApiStarcoreSentinel = {
         definirTokenAdmin(token) {
             const tokenNormalizado = (token || '').trim();
 

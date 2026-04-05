@@ -26,7 +26,7 @@ app.get('/', (req, res) => {
 const dataDir = path.join(__dirname, 'data');
 fs.mkdirSync(dataDir, { recursive: true });
 
-const db = new Database(path.join(dataDir, 'chromebeast.db'));
+const db = new Database(path.join(dataDir, 'starcore.db'));
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS usuarios (
@@ -133,7 +133,7 @@ async function enviarEmailCodigo({ destino, assunto, titulo, descricao, codigo }
     }
 
     await transporter.sendMail({
-        from: process.env.SMTP_FROM || '"CHROMEBEAST" <noreply@batenterprise.com>',
+        from: process.env.SMTP_FROM || '"STARCORE SENTINEL" <noreply@batenterprise.com>',
         to: destino,
         subject: assunto,
         text: `${descricao} Codigo: ${codigo}`,
@@ -194,8 +194,8 @@ app.post('/api/auth/registrar', async (req, res) => {
 
         await enviarEmailCodigo({
             destino: email,
-            assunto: 'CODIGO DE VERIFICACAO - CHROMEBEAST',
-            titulo: 'CHROMEBEAST',
+            assunto: 'CODIGO DE VERIFICACAO - STARCORE',
+            titulo: 'STARCORE SENTINEL',
             descricao: 'Use este codigo para validar sua conta.',
             codigo
         });
@@ -261,7 +261,7 @@ app.post('/api/auth/esqueci-senha', async (req, res) => {
 
     await enviarEmailCodigo({
         destino: email,
-        assunto: 'RECUPERACAO DE SENHA - CHROMEBEAST',
+        assunto: 'RECUPERACAO DE SENHA - STARCORE',
         titulo: 'RECUPERACAO DE ACESSO',
         descricao: 'Use este codigo para redefinir sua senha.',
         codigo
@@ -376,7 +376,7 @@ app.post('/api/auth/login', async (req, res) => {
     return res.send({ mensagem: 'ACESSO_LIBERADO', usuario: user.usuario });
 });
 
-const ADMIN_TOKEN = process.env.ADMIN_TOKEN || 'chromebeast-admin-2026';
+const ADMIN_TOKEN = process.env.ADMIN_TOKEN || 'bat-sentinel-2026';
 
 function verificarAdmin(req, res, next) {
     const token = req.headers.authorization;
@@ -421,8 +421,8 @@ app.delete('/api/mensagens/:id', verificarAdmin, (req, res) => {
 
 app.listen(PORTA, () => {
     console.log('==========================================');
-    console.log('[CHROMEBEAST] NUCLEO LOCAL SQLITE ATIVO');
-    console.log(`[BANCO] db: chromebeast.db | [PORTA] ${PORTA}`);
+    console.log('[STARCORE SENTINEL] NUCLEO LOCAL SQLITE ATIVO');
+    console.log(`[BANCO] db: starcore.db | [PORTA] ${PORTA}`);
     console.log('[OPERADOR] BAT ENTERPRISE');
     console.log('==========================================');
 });

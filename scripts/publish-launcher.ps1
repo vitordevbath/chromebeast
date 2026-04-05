@@ -17,13 +17,13 @@ if (-not $nodeCommand) {
 New-Item -ItemType Directory -Force -Path $runtimeDir | Out-Null
 Copy-Item $nodeCommand.Source (Join-Path $runtimeDir "node.exe") -Force
 
-Write-Host "[Chromebeast] Runtime local do Node preparado em runtime\node"
-Write-Host "[Chromebeast] Publicando launcher unico..."
+Write-Host "[Starcore] Runtime local do Node preparado em runtime\node"
+Write-Host "[Starcore] Publicando launcher unico..."
 dotnet publish $launcherProject -c $Configuration -o $publishDir
 
-Copy-Item (Join-Path $publishDir "ChromebeastLauncher.exe") (Join-Path $repoRoot "dist\ChromebeastLauncher.exe") -Force
-if (Test-Path (Join-Path $publishDir "ChromebeastLauncher.pdb")) {
-    Copy-Item (Join-Path $publishDir "ChromebeastLauncher.pdb") (Join-Path $repoRoot "dist\ChromebeastLauncher.pdb") -Force
+Copy-Item (Join-Path $publishDir "StarcoreLauncher.exe") (Join-Path $repoRoot "dist\StarcoreLauncher.exe") -Force
+if (Test-Path (Join-Path $publishDir "StarcoreLauncher.pdb")) {
+    Copy-Item (Join-Path $publishDir "StarcoreLauncher.pdb") (Join-Path $repoRoot "dist\StarcoreLauncher.pdb") -Force
 }
 
-Write-Host "[Chromebeast] Launcher unico pronto em dist\ChromebeastLauncher.exe"
+Write-Host "[Starcore] Launcher unico pronto em dist\StarcoreLauncher.exe"

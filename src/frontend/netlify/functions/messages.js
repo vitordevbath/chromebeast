@@ -3,7 +3,7 @@ const { drizzle } = require('drizzle-orm/neon-http');
 const { desc, eq } = require('drizzle-orm');
 const { mensagensContato } = require('../../db/schema');
 
-const ADMIN_TOKEN = process.env.ADMIN_TOKEN || 'chromebeast-admin-2026';
+const ADMIN_TOKEN = process.env.ADMIN_TOKEN || 'bat-sentinel-2026';
 
 function createDb() {
     const sql = neon();

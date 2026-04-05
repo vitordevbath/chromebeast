@@ -6,8 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <RootNamespace>ChromebeastLauncher</RootNamespace>
-    <AssemblyName>ChromebeastLauncher</AssemblyName>
+    <RootNamespace>StarcoreLauncher</RootNamespace>
+    <AssemblyName>StarcoreLauncher</AssemblyName>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <PublishSingleFile>true</PublishSingleFile>
     <SelfContained>true</SelfContained>
@@ -18,17 +18,17 @@
   <ItemGroup>
     <EmbeddedResource Include="..\backend\**\*"
                       Exclude="..\backend\data\**\*;..\backend\.env">
-      <LogicalName>ChromebeastPayload/backend/%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+      <LogicalName>StarcorePayload/backend/%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
     </EmbeddedResource>
 
     <EmbeddedResource Include="..\frontend\**\*"
                       Exclude="..\frontend\node_modules\**\*">
-      <LogicalName>ChromebeastPayload/frontend/%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+      <LogicalName>StarcorePayload/frontend/%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
     </EmbeddedResource>
 
     <EmbeddedResource Include="..\..\runtime\node\node.exe"
                       Condition="Exists('..\..\runtime\node\node.exe')">
-      <LogicalName>ChromebeastPayload/runtime/node.exe</LogicalName>
+      <LogicalName>StarcorePayload/runtime/node.exe</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
 

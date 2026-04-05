@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const api = window.ApiChromebeast;
+    const api = window.ApiStarcoreSentinel;
     const modalAutenticacao = document.getElementById('modal-autenticacao');
     const splash = document.getElementById('container-splash');
     const conteudoPrincipal = document.getElementById('conteudo-principal');
@@ -73,8 +73,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function entrarNoSistema(usuario) {
-        sessionStorage.setItem('chromebeast_autenticado', 'true');
-        sessionStorage.setItem('chromebeast_user', usuario);
+        sessionStorage.setItem('starcore_sentinel_autenticado', 'true');
+        sessionStorage.setItem('starcore_sentinel_user', usuario);
 
         modalAutenticacao.classList.add('fade-out');
         setTimeout(() => {
@@ -95,9 +95,9 @@ document.addEventListener('DOMContentLoaded', () => {
             ' [!] ROBO_DO_SISTEMA: ATIVO',
             '>> SINCRONIZANDO_NUCLEO_SQLITE... [OK]',
             '>> ESTABELECENDO_LINK_NEURAL... [ESTAVEL]',
-            '>> CARREGANDO_RECURSOS_CHROMEBEAST... [OK]',
+            '>> CARREGANDO_RECURSOS_SENTINEL... [OK]',
             '>> SISTEMA_PRONTO.',
-            '>> BEM-VINDO_AO_CHROMEBEAST.'
+            '>> BEM-VINDO_AO_STARCORE_SENTINEL.'
         ];
 
         let indexLog = 0;
@@ -254,7 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    if (sessionStorage.getItem('chromebeast_autenticado') === 'true') {
+    if (sessionStorage.getItem('starcore_sentinel_autenticado') === 'true') {
         modalAutenticacao.style.display = 'none';
         revelarSistema();
     }
