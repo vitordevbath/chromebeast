@@ -1,0 +1,27 @@
+# Visual Studio / .NET
+bin/
+obj/
+*.user
+*.suo
+*.vsidx
+.vs/
+.vs-code/
+
+# Node.js
+node_modules/
+npm-debug.log
+.env
+
+# Banco de dados e dados sensiveis
+*.db
+*.sqlite
+src/backend/data/*.db
+src/backend/data/*.sqlite
+
+# Logs e temporarios
+*.log
+tmp/
+dist/
+
+# Sistema
+.DS_Store

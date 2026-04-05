@@ -1,0 +1,11 @@
+{
+  "name": "chromebeast-frontend",
+  "version": "1.0.0",
+  "dependencies": {
+    "@netlify/neon": "^0.1.2",
+    "drizzle-orm": "^0.30.0"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.21.0"
+  }
+}

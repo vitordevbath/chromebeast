@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHROMEBEAST | Sistema de Defesa Digital</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+    <a href="mailto:admin@batenterprise.com" id="reportar-bug" class="link-pixel">REPORTAR_ANOMALIA</a>
+
+    <div id="modal-autenticacao" class="modal-pixel">
+        <div class="conteudo-modal">
+            <div class="abas-modal">
+                <button id="aba-entrar" class="botao-aba ativo">ENTRAR</button>
+                <button id="aba-cadastrar" class="botao-aba">CADASTRAR</button>
+            </div>
+
+            <div id="form-entrar" class="formulario-autenticacao">
+                <h2 class="titulo-pixel">IDENTIFICAR_OPERADOR</h2>
+                <div class="campos-autenticacao">
+                    <input type="text" id="login-usuario" placeholder="USUARIO_OU_E-MAIL" class="input-pixel" autocomplete="username">
+                    <input type="password" id="login-senha" placeholder="SENHA" class="input-pixel" autocomplete="current-password">
+                    <button id="botao-autenticar" class="botao-neon-gotico botao-pixel" type="button">AUTENTICAR</button>
+                </div>
+                <button id="botao-esqueci-senha" class="botao-link-pixel" type="button">ESQUECEU_A_SENHA?</button>
+                <p id="erro-login" class="mensagem-erro oculto">ACESSO_NEGADO_CREDENCIAIS_INVALIDAS</p>
+            </div>
+
+            <div id="form-cadastrar" class="formulario-autenticacao oculto">
+                <h2 class="titulo-pixel">NOVA_IDENTIDADE</h2>
+                <div class="campos-autenticacao">
+                    <input type="text" id="cad-usuario" placeholder="ESCOLHER_USUARIO" class="input-pixel" autocomplete="username">
+                    <input type="email" id="cad-email" placeholder="E-MAIL_PARA_CODIGO" class="input-pixel" autocomplete="email">
+                    <input type="password" id="cad-senha" placeholder="ESCOLHER_SENHA_FORTE" class="input-pixel" autocomplete="new-password">
+                    <button id="botao-cadastrar" class="botao-neon-gotico botao-pixel" type="button">CRIAR_IDENTIDADE</button>
+                </div>
+                <p class="texto-auxiliar-autenticacao">Requisitos: 8+ caracteres, maiuscula, minuscula e numero.</p>
+                <p id="msg-cadastro" class="mensagem-erro oculto"></p>
+            </div>
+
+            <div id="form-verificar" class="formulario-autenticacao oculto">
+                <h2 class="titulo-pixel">VALIDAR_ACESSO</h2>
+                <p class="texto-auxiliar-autenticacao">CODIGO_ENVIADO_PARA_O_E-MAIL_CADASTRADO</p>
+                <div class="campos-autenticacao">
+                    <input type="text" id="cod-verificacao" placeholder="CODIGO_6_DIGITOS" class="input-pixel">
+                    <button id="botao-verificar" class="botao-neon-gotico botao-pixel" type="button">VALIDAR_CODIGO</button>
+                </div>
+                <p id="msg-verificacao" class="mensagem-erro oculto"></p>
+            </div>
+
+            <div id="form-recuperar" class="formulario-autenticacao oculto">
+                <h2 class="titulo-pixel">RECUPERAR_ACESSO</h2>
+                <div class="campos-autenticacao">
+                    <input type="email" id="reset-email" placeholder="E-MAIL_DA_CONTA" class="input-pixel" autocomplete="email">
+                    <button id="botao-solicitar-reset" class="botao-neon-gotico botao-pixel" type="button">ENVIAR_CODIGO</button>
+                    <input type="text" id="reset-codigo" placeholder="CODIGO_DE_RESET" class="input-pixel">
+                    <input type="password" id="reset-nova-senha" placeholder="NOVA_SENHA_FORTE" class="input-pixel" autocomplete="new-password">
+                    <button id="botao-redefinir-senha" class="botao-neon-gotico botao-pixel" type="button">REDEFINIR_SENHA</button>
+                </div>
+                <button id="botao-voltar-login" class="botao-link-pixel" type="button">VOLTAR_AO_LOGIN</button>
+                <p id="msg-recuperacao" class="mensagem-erro oculto"></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="cursor-customizado"></div>
+    <div id="cursor-desfoque"></div>
+
+    <div id="container-splash" class="oculto">
+        <div id="logs-terminal"></div>
+        <button id="botao-pular" class="botao-neon-gotico oculto" style="position: absolute; bottom: 50px; right: 50px; z-index: 10001; font-size: 0.6rem; padding: 10px 20px;">PULAR_SEQUENCIA [ESC]</button>
+    </div>
+
+    <nav class="navegacao-hibrida oculto">
+            <a href="#inicio" class="logo-nav" data-link-nav>CHROMEBEAST</a>
+        <div class="links-nav">
+            <a href="#inicio" data-link-nav>INICIO</a>
+            <a href="#jogar" class="nav-jogar" data-link-nav>JOGAR</a>
+            <a href="#sobre" data-link-nav>ENTIDADE</a>
+            <a href="#galeria" data-link-nav>GALERIA</a>
+            <a href="#contato" data-link-nav>CONTATO</a>
+            <a href="admin.html" target="_blank">ADMIN</a>
+            <a href="https://github.com/batenterprise" target="_blank" class="link-github">GITHUB</a>
+        </div>
+    </nav>
+
+    <main id="conteudo-principal" class="oculto conteudo-dinamico">
+        <div id="container-nave" class="oculto">
+            <img src="assets/nave.png" alt="Nave" id="drone-nave">
+        </div>
+
+        <section id="inicio" class="secao-neon-gotica secao-conteudo ativo">
+            <div class="conteudo-hero">
+                <h1 class="titulo-cromo">CHROMEBEAST</h1>
+                <p class="subtitulo">PROTOCOLO DE SEGURANCA E DESENVOLVIMENTO AVANCADO</p>
+                <div style="margin-top: 60px; display: flex; justify-content: center;">
+                    <button data-alvo="jogar" class="botao-neon-gotico botao-interno" style="font-size: 1.5rem; padding: 20px 60px; border-width: 2px; box-shadow: 0 0 30px rgba(188, 19, 254, 0.4);">INICIAR_NUCLEO</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="jogar" class="secao-ciber secao-conteudo">
+            <div class="container">
+                <h2 class="titulo-cromo" style="font-size: 4rem; margin-bottom: 40px;">ESTACAO_DE_JOGOS</h2>
+                <div class="grade-jogos" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px;">
+                    <a href="#contato" data-card-jogo class="card-vidro" style="height: 350px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-decoration: none; color: inherit; border: 2px solid var(--neon-ciber); background: rgba(188, 19, 254, 0.03); transition: 0.4s;">
+                        <div style="text-align: center;">
+                            <h4 style="font-family: var(--fonte-principal); font-size: 2.2rem; color: #fff; text-shadow: 0 0 15px var(--neon-ciber);">CONQUISTA_ESPACIAL</h4>
+                            <p style="font-size: 0.8rem; letter-spacing: 5px; color: var(--neon-ciber); margin: 20px 0;">[ OPERAR_EM_TELA_CHEIA ]</p>
+                            <span class="botao-neon-gotico" style="font-size: 0.7rem; padding: 12px 30px;">LANCAR_JOGO</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="sobre" class="secao-neon-gotica secao-conteudo">
+            <div class="container">
+                <h2 class="titulo-cromo" style="font-size: 4rem; margin-bottom: 40px;">ENTIDADE_OPERACIONAL</h2>
+                <div class="card-vidro">
+                    <p style="font-size: 1.1rem; line-height: 1.8; color: #ccc; text-align: left; font-family: var(--fonte-mono);">
+                        >> ENTIDADE: BAT ENTERPRISE<br>
+                        >> ESPECIALIDADE: ENGENHARIA DE SISTEMAS CRITICOS<br>
+                        >> STATUS: VIGILANTE NO CORTEX<br><br>
+                        A bat enterprise opera no limite entre a automacao pura e a arte digital. Especializada em arquiteturas distribuidas, seguranca cibernetica e experiencias gamificadas. Nossa missao e monitorar, proteger e evoluir o ecossistema Chromebeast.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section id="galeria" class="secao-ciber secao-conteudo">
+            <div class="container">
+                <h2 class="titulo-cromo" style="font-size: 4rem; margin-bottom: 40px;">GALERIA_VISUAL</h2>
+                <div class="grade-galeria" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                    <div class="card-vidro galeria-espaco" data-item-galeria style="height: 250px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center;">
+                        <span style="font-size: 0.6rem; color: #555;">[ ASSET_01_PENDENTE ]</span>
+                    </div>
+                    <div class="card-vidro galeria-espaco" data-item-galeria style="height: 250px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center;">
+                        <span style="font-size: 0.6rem; color: #555;">[ ASSET_02_PENDENTE ]</span>
+                    </div>
+                    <div class="card-vidro galeria-espaco" data-item-galeria style="height: 250px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center;">
+                        <span style="font-size: 0.6rem; color: #555;">[ ASSET_03_PENDENTE ]</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contato" class="secao-neon-gotica secao-conteudo">
+            <div class="container">
+                <h2 class="titulo-cromo" style="font-size: 4rem; margin-bottom: 40px;">PROTOCOLO_DE_CONTATO</h2>
+                <div class="card-vidro" style="max-width: 600px; margin: 0 auto;">
+                    <form id="formulario-contato">
+                        <div class="campos-autenticacao">
+                            <input type="text" id="contato-nome" placeholder="NOME_DO_OPERADOR" class="input-pixel" required>
+                            <input type="email" id="contato-email" placeholder="E-MAIL_CRIPTOGRAFADO" class="input-pixel" required>
+                            <textarea id="contato-mensagem" placeholder="TRANSMITIR_PACOTE_DE_DADOS" rows="4" class="input-pixel" required></textarea>
+                            <button type="submit" id="botao-enviar-contato" class="botao-neon-gotico botao-pixel">ENVIAR_SINAL</button>
+                        </div>
+                    </form>
+                    <div id="msg-formulario" style="margin-top: 20px; text-align: center; font-size: 0.5rem;"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="api.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

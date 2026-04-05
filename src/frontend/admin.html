@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHROMEBEAST | Monitoramento de Sinais</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { cursor: default; }
+        .admin-container { padding: 50px; max-width: 1200px; margin: 0 auto; }
+        .admin-auth { display: flex; gap: 10px; align-items: center; margin-top: 25px; flex-wrap: wrap; }
+        .admin-feedback { margin-top: 15px; font-size: 0.6rem; color: #ccc; }
+        table { width: 100%; border-collapse: collapse; margin-top: 30px; background: rgba(255,255,255,0.02); }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 0.8rem; }
+        th { color: var(--neon-ciber); text-transform: uppercase; letter-spacing: 2px; }
+        tr:hover { background: rgba(188, 19, 254, 0.05); }
+        .delete-btn { background: none; border: 1px solid var(--rosa-ciber); color: var(--rosa-ciber); cursor: pointer; padding: 5px 10px; font-size: 0.6rem; }
+        .delete-btn:hover { background: var(--rosa-ciber); color: #fff; }
+    </style>
+</head>
+<body style="cursor: auto;">
+    <div class="admin-container">
+        <h1 class="titulo-cromo" style="font-size: 3rem;">SINAIS_CAPTURADOS</h1>
+        <a href="index.html" class="botao-neon-gotico" style="text-decoration: none; font-size: 0.6rem; padding: 10px 20px;">RETORNAR_AO_SISTEMA</a>
+
+        <div class="admin-auth">
+            <input id="admin-token" class="input-pixel" type="password" placeholder="TOKEN_ADMIN" style="max-width: 320px;">
+            <button id="salvar-token" class="botao-neon-gotico botao-pixel" type="button" style="margin-top: 0;">SALVAR_TOKEN</button>
+            <button id="limpar-token" class="botao-neon-gotico botao-pixel" type="button" style="margin-top: 0;">LIMPAR_TOKEN</button>
+        </div>
+        <div id="admin-feedback" class="admin-feedback"></div>
+
+        <table id="messages-table">
+            <thead>
+                <tr>
+                    <th>TIMESTAMP</th>
+                    <th>OPERADOR</th>
+                    <th>E-MAIL</th>
+                    <th>PACOTE_DE_DADOS</th>
+                    <th>ACAO</th>
+                </tr>
+            </thead>
+            <tbody id="messages-body"></tbody>
+        </table>
+    </div>
+
+    <script src="api.js"></script>
+    <script>
+        const api = window.ApiChromebeast;
+        const body = document.getElementById('messages-body');
+        const tokenInput = document.getElementById('admin-token');
+        const feedback = document.getElementById('admin-feedback');
+
+        tokenInput.value = api.obterTokenAdmin();
+
+        function setFeedback(message, color = '#ccc') {
+            feedback.style.color = color;
+            feedback.innerText = message;
+        }
+
+        document.getElementById('salvar-token').addEventListener('click', () => {
+            api.definirTokenAdmin(tokenInput.value);
+            setFeedback('TOKEN_ADMIN_SALVO.', '#00ff88');
+            loadMessages();
+        });
+
+        document.getElementById('limpar-token').addEventListener('click', () => {
+            tokenInput.value = '';
+            api.definirTokenAdmin('');
+            body.innerHTML = '<tr><td colspan="5">TOKEN_ADMIN_REMOVIDO.</td></tr>';
+            setFeedback('TOKEN_ADMIN_REMOVIDO.');
+        });
+
+        async function loadMessages() {
+            body.innerHTML = '';
+
+            if (!api.obterTokenAdmin()) {
+                body.innerHTML = '<tr><td colspan="5">INFORME_O_TOKEN_ADMIN_PARA_CONSULTAR_OS_SINAIS.</td></tr>';
+                setFeedback('TOKEN_ADMIN_NAO_CONFIGURADO.', '#ffcc00');
+                return;
+            }
+
+            try {
+                const data = await api.listarMensagens();
+                const sortedMessages = [...data].sort((a, b) => new Date(b.data_hora) - new Date(a.data_hora));
+
+                sortedMessages.forEach((msg) => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${new Date(msg.data_hora).toLocaleString('pt-BR')}</td>
+                        <td>${msg.nome}</td>
+                        <td>${msg.email}</td>
+                        <td>${msg.mensagem}</td>
+                        <td><button class="delete-btn" onclick="deleteMessage(${msg.id})">ELIMINAR</button></td>
+                    `;
+                    body.appendChild(tr);
+                });
+
+                if (!sortedMessages.length) {
+                    body.innerHTML = '<tr><td colspan="5">NENHUM_SINAL_DETECTADO.</td></tr>';
+                }
+
+                setFeedback('NUCLEO_ADMIN_SINCRONIZADO.', '#00ff88');
+            } catch (error) {
+                body.innerHTML = `<tr><td colspan="5">ERRO: ${error.message || 'NUCLEO_ADMIN_OFFLINE'}.</td></tr>`;
+                setFeedback(error.status === 403 ? 'TOKEN_ADMIN_INVALIDO.' : 'FALHA_AO_CARREGAR_SINAIS.', '#ff0055');
+            }
+        }
+
+        async function deleteMessage(id) {
+            if (!confirm('CONFIRMAR_PROTOCOLO_DE_ELIMINACAO?')) {
+                return;
+            }
+
+            try {
+                await api.excluirMensagem(id);
+                setFeedback('SINAL_ELIMINADO.', '#00ff88');
+                loadMessages();
+            } catch (error) {
+                body.innerHTML = `<tr><td colspan="5">ERRO: ${error.message || 'FALHA_NA_ELIMINACAO'}.</td></tr>`;
+                setFeedback('FALHA_AO_ELIMINAR_SINAL.', '#ff0055');
+            }
+        }
+
+        loadMessages();
+        window.deleteMessage = deleteMessage;
+    </script>
+</body>
+</html>
