@@ -74,8 +74,21 @@ O painel exige `ADMIN_TOKEN`, salvo no navegador pelo próprio formulário da te
 
 - contato: `src/frontend/netlify/functions/contact.js`
 - mensagens admin: `src/frontend/netlify/functions/messages.js`
+- autenticacao remota: `src/frontend/netlify/functions/auth.js`
 
 As funções de autenticação continuam locais no backend Express.
+
+## Variáveis de Ambiente
+
+Local:
+
+- copie `.env.example` para `.env` dentro do backend local quando quiser SMTP real
+- `ADMIN_TOKEN` controla o acesso ao painel admin
+
+Netlify:
+
+- configure `DATABASE_URL` ou `NETLIFY_DATABASE_URL` apontando para o banco Neon/Postgres
+- configure `ADMIN_TOKEN` se quiser sobrescrever o valor padrão
 
 ## Desenvolvido por
 
