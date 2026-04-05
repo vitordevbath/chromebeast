@@ -8,6 +8,10 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <RootNamespace>ChromebeastLauncher</RootNamespace>
     <AssemblyName>ChromebeastLauncher</AssemblyName>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
   </PropertyGroup>
 
 </Project>
