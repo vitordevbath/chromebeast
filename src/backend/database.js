@@ -152,6 +152,9 @@ function createSqliteStore() {
         },
         async deleteMessage(id) {
             db.prepare('DELETE FROM mensagens WHERE id = ?').run(id);
+        },
+        async deleteAllUsers() {
+            db.prepare('DELETE FROM usuarios').run();
         }
     };
 }
@@ -296,6 +299,9 @@ function createPostgresStore(connectionString) {
         },
         async deleteMessage(id) {
             await pool.query('DELETE FROM mensagens WHERE id = $1', [id]);
+        },
+        async deleteAllUsers() {
+            await pool.query('DELETE FROM usuarios');
         }
     };
 }

@@ -392,6 +392,11 @@ app.delete('/api/mensagens/:id', verificarAdmin, async (req, res) => {
     res.send({ mensagem: 'SINAL_PURGADO' });
 });
 
+app.delete('/api/admin/usuarios', verificarAdmin, async (req, res) => {
+    await store.deleteAllUsers();
+    res.send({ mensagem: 'USUARIOS_REMOVIDOS_COM_SUCESSO' });
+});
+
 async function start() {
     await store.init();
 
