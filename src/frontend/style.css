@@ -69,7 +69,7 @@ body {
     background: #000;
     border: 4px solid var(--neon-ciber);
     padding: 30px;
-    width: 420px;
+    width: min(460px, calc(100vw - 32px));
     text-align: center;
     box-shadow: 0 0 50px rgba(188, 19, 254, 0.3);
     position: relative;
@@ -86,8 +86,9 @@ body {
     background: none;
     border: none;
     color: #555;
-    font-family: var(--fonte-pixel);
-    font-size: 0.5rem;
+    font-family: var(--fonte-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
     padding: 15px;
     cursor: pointer;
     transition: 0.3s;
@@ -108,10 +109,12 @@ body {
 }
 
 .titulo-pixel {
-    font-size: 0.6rem;
+    font-family: var(--fonte-sub);
+    font-size: 1rem;
+    letter-spacing: 0.12em;
     margin-bottom: 20px;
     color: #fff;
-    text-shadow: 2px 2px var(--rosa-ciber);
+    text-shadow: 1px 1px var(--rosa-ciber);
     line-height: 1.6;
 }
 
@@ -126,10 +129,15 @@ body {
     border: 2px solid #333;
     padding: 15px;
     color: var(--neon-ciber);
-    font-family: var(--fonte-pixel);
-    font-size: 0.45rem;
+    font-family: var(--fonte-mono);
+    font-size: 0.85rem;
+    line-height: 1.5;
     outline: none;
     transition: 0.3s;
+}
+
+.input-pixel::placeholder {
+    color: #7f7f7f;
 }
 
 .input-pixel:focus {
@@ -138,21 +146,24 @@ body {
 }
 
 .botao-pixel {
-    font-family: var(--fonte-pixel) !important;
-    font-size: 0.5rem !important;
+    font-family: var(--fonte-mono) !important;
+    font-size: 0.78rem !important;
+    letter-spacing: 0.12em;
     margin-top: 10px;
 }
 
 .mensagem-erro {
     color: var(--rosa-ciber);
-    font-size: 0.4rem;
+    font-family: var(--fonte-mono);
+    font-size: 0.8rem;
     margin-top: 15px;
     line-height: 1.5;
 }
 
 .texto-auxiliar-autenticacao {
     color: #9a9a9a;
-    font-size: 0.42rem;
+    font-family: var(--fonte-mono);
+    font-size: 0.76rem;
     line-height: 1.6;
     margin-top: 10px;
 }
@@ -162,8 +173,9 @@ body {
     border: none;
     color: var(--neon-ciber);
     cursor: pointer;
-    font-family: var(--fonte-pixel);
-    font-size: 0.42rem;
+    font-family: var(--fonte-mono);
+    font-size: 0.76rem;
+    letter-spacing: 0.08em;
     margin-top: 12px;
     text-decoration: underline;
 }
