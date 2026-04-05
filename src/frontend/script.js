@@ -21,6 +21,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let emailTemporario = '';
 
+    function syncEmailVerificacao() {
+        const campoEmailVerificacao = document.getElementById('ver-email');
+        if (campoEmailVerificacao && emailTemporario) {
+            campoEmailVerificacao.value = emailTemporario;
+        }
+    }
+
     function limparMensagensAutenticacao() {
         [msgCadastro, msgVerificacao, msgLogin, msgRecuperacao].forEach((elemento) => {
             elemento.classList.add('oculto');
@@ -139,6 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const resposta = await api.registrar(usuario, email, senha);
             emailTemporario = email;
+            syncEmailVerificacao();
             msgCadastro.style.color = '#00ff88';
             msgCadastro.innerText = 'IDENTIDADE_CRIADA. VALIDACAO_REQUERIDA.';
             exibirCodigoDesenvolvimento(msgCadastro, resposta);
@@ -149,16 +157,37 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     document.getElementById('botao-verificar').onclick = async () => {
+        const email = document.getElementById('ver-email').value.trim() || emailTemporario;
         const codigo = document.getElementById('cod-verificacao').value.trim();
 
         limparMensagensAutenticacao();
         msgVerificacao.classList.remove('oculto');
 
         try {
-            await api.verificar(emailTemporario, codigo);
+            await api.verificar(email, codigo);
             msgVerificacao.style.color = '#00ff88';
             msgVerificacao.innerText = 'SUCESSO: IDENTIDADE_VALIDADA.';
             setTimeout(mostrarAbaEntrar, 1500);
+        } catch (erro) {
+            msgVerificacao.innerText = `ERRO: ${erro.message}`;
+        }
+    };
+
+    document.getElementById('botao-reenviar-verificacao').onclick = async () => {
+        const email = document.getElementById('ver-email').value.trim() || emailTemporario;
+
+        limparMensagensAutenticacao();
+        msgVerificacao.classList.remove('oculto');
+        msgVerificacao.style.color = '#ffffff';
+        msgVerificacao.innerText = 'REENVIANDO_CODIGO...';
+
+        try {
+            const resposta = await api.reenviarVerificacao(email);
+            emailTemporario = email;
+            syncEmailVerificacao();
+            msgVerificacao.style.color = '#00ff88';
+            msgVerificacao.innerText = resposta.mensagem;
+            exibirCodigoDesenvolvimento(msgVerificacao, resposta);
         } catch (erro) {
             msgVerificacao.innerText = `ERRO: ${erro.message}`;
         }
@@ -190,6 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const resposta = await api.esqueciSenha(email);
             emailTemporario = email;
+            syncEmailVerificacao();
             msgRecuperacao.style.color = '#00ff88';
             msgRecuperacao.innerText = resposta.mensagem;
             exibirCodigoDesenvolvimento(msgRecuperacao, resposta);
@@ -258,4 +288,6 @@ document.addEventListener('DOMContentLoaded', () => {
         modalAutenticacao.style.display = 'none';
         revelarSistema();
     }
+
+    syncEmailVerificacao();
 });

@@ -85,6 +85,14 @@ function createSqliteStore() {
                 WHERE id = ?
             `).run(id);
         },
+        async updateVerificationCode(id, codigo, codigoExpiraEm) {
+            db.prepare(`
+                UPDATE usuarios
+                SET codigo_verificacao = ?,
+                    codigo_verificacao_expira_em = ?
+                WHERE id = ?
+            `).run(codigo, codigoExpiraEm, id);
+        },
         async findUserByEmail(email) {
             return normalizeUserRow(db.prepare('SELECT * FROM usuarios WHERE email = ?').get(email));
         },
@@ -209,6 +217,14 @@ function createPostgresStore(connectionString) {
                     codigo_verificacao_expira_em = NULL
                 WHERE id = $1
             `, [id]);
+        },
+        async updateVerificationCode(id, codigo, codigoExpiraEm) {
+            await pool.query(`
+                UPDATE usuarios
+                SET codigo_verificacao = $1,
+                    codigo_verificacao_expira_em = $2
+                WHERE id = $3
+            `, [codigo, codigoExpiraEm, id]);
         },
         async findUserByEmail(email) {
             const result = await pool.query('SELECT * FROM usuarios WHERE email = $1 LIMIT 1', [email]);

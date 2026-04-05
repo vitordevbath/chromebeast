@@ -71,6 +71,13 @@
                 body: JSON.stringify({ email, codigo })
             });
         },
+        async reenviarVerificacao(email) {
+            return requisicao('auth/reenviar-verificacao', {
+                method: 'POST',
+                headers: buildHeaders({ 'Content-Type': 'application/json' }),
+                body: JSON.stringify({ email })
+            });
+        },
         async login(usuario, senha) {
             return requisicao('auth/login', {
                 method: 'POST',

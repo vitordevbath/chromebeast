@@ -32,6 +32,7 @@ const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST || 'smtp.gmail.com',
     port: Number(process.env.SMTP_PORT || 587),
     secure: false,
+    requireTLS: true,
     auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS
@@ -94,33 +95,46 @@ function validarSenha(senha) {
 
 async function enviarEmailCodigo({ destino, assunto, titulo, descricao, codigo }) {
     if (!process.env.SMTP_USER) {
-        return false;
+        return { enviado: false, fallback: true, motivo: 'SMTP_NAO_CONFIGURADO' };
     }
 
-    await transporter.sendMail({
-        from: process.env.SMTP_FROM || '"STARCORE SENTINEL" <noreply@batenterprise.com>',
-        to: destino,
-        subject: assunto,
-        text: `${descricao} Codigo: ${codigo}`,
-        html: `
-            <div style="background:#000;color:#bc13fe;padding:24px;font-family:monospace;">
-                <h1 style="margin:0 0 12px;">${titulo}</h1>
-                <p style="margin:0 0 18px;">${descricao}</p>
-                <p style="margin:0;font-size:32px;color:#fff;"><strong>${codigo}</strong></p>
-                <p style="margin:18px 0 0;color:#999;">Este codigo expira em ${CODIGO_EXPIRA_MINUTOS} minutos.</p>
-            </div>
-        `
-    });
+    try {
+        await transporter.sendMail({
+            from: process.env.SMTP_FROM || '"STARCORE SENTINEL" <noreply@batenterprise.com>',
+            to: destino,
+            subject: assunto,
+            text: `${descricao} Codigo: ${codigo}`,
+            html: `
+                <div style="background:#000;color:#bc13fe;padding:24px;font-family:monospace;">
+                    <h1 style="margin:0 0 12px;">${titulo}</h1>
+                    <p style="margin:0 0 18px;">${descricao}</p>
+                    <p style="margin:0;font-size:32px;color:#fff;"><strong>${codigo}</strong></p>
+                    <p style="margin:18px 0 0;color:#999;">Este codigo expira em ${CODIGO_EXPIRA_MINUTOS} minutos.</p>
+                </div>
+            `
+        });
 
-    return true;
+        return { enviado: true, fallback: false };
+    } catch (error) {
+        console.error('[FALHA_EMAIL]', error);
+        return { enviado: false, fallback: true, motivo: 'FALHA_ENVIO_EMAIL' };
+    }
 }
 
-function getDevCodePayload(codigo) {
-    if (process.env.SMTP_USER) {
+function getDevCodePayload(codigo, fallback) {
+    if (!fallback) {
         return {};
     }
 
     return { codigo_desenvolvimento: codigo };
+}
+
+function buildDeliveryResponse(codigo, emailResult, sucessoMensagem) {
+    return {
+        mensagem: sucessoMensagem,
+        email_enviado: emailResult.enviado,
+        ...getDevCodePayload(codigo, emailResult.fallback)
+    };
 }
 
 app.post('/api/auth/registrar', async (req, res) => {
@@ -152,7 +166,7 @@ app.post('/api/auth/registrar', async (req, res) => {
     try {
         await store.createUser({ usuario, email, senhaHash: hashSenha, codigo, codigoExpiraEm });
 
-        await enviarEmailCodigo({
+        const emailResult = await enviarEmailCodigo({
             destino: email,
             assunto: 'CODIGO DE VERIFICACAO - STARCORE',
             titulo: 'STARCORE SENTINEL',
@@ -160,13 +174,46 @@ app.post('/api/auth/registrar', async (req, res) => {
             codigo
         });
 
-        return res.status(201).send({
-            mensagem: 'IDENTIDADE_CRIADA_AGUARDANDO_VERIFICACAO',
-            ...getDevCodePayload(codigo)
-        });
+        return res.status(201).send(
+            buildDeliveryResponse(codigo, emailResult, 'IDENTIDADE_CRIADA_AGUARDANDO_VERIFICACAO')
+        );
     } catch (error) {
         return jsonError(res, 400, 'USUARIO_OU_EMAIL_JA_EXISTE');
     }
+});
+
+app.post('/api/auth/reenviar-verificacao', async (req, res) => {
+    const email = normalizeEmail(req.body.email);
+
+    if (!validarEmail(email)) {
+        return jsonError(res, 400, 'EMAIL_INVALIDO');
+    }
+
+    const user = await store.findUserByEmail(email);
+
+    if (!user) {
+        return res.send({ mensagem: 'SE_A_CONTA_EXISTIR_O_CODIGO_SERA_REENVIADO' });
+    }
+
+    if (user.verificado) {
+        return res.send({ mensagem: 'CONTA_JA_VERIFICADA' });
+    }
+
+    const codigo = gerarCodigoNumerico();
+    const codigoExpiraEm = gerarExpiracaoIso(CODIGO_EXPIRA_MINUTOS);
+    await store.updateVerificationCode(user.id, codigo, codigoExpiraEm);
+
+    const emailResult = await enviarEmailCodigo({
+        destino: email,
+        assunto: 'REENVIO DE CODIGO - STARCORE',
+        titulo: 'REENVIO DE VALIDACAO',
+        descricao: 'Use este codigo para validar sua conta.',
+        codigo
+    });
+
+    return res.send(
+        buildDeliveryResponse(codigo, emailResult, 'SE_A_CONTA_EXISTIR_O_CODIGO_SERA_REENVIADO')
+    );
 });
 
 app.post('/api/auth/verificar', async (req, res) => {
@@ -206,7 +253,7 @@ app.post('/api/auth/esqueci-senha', async (req, res) => {
 
     await store.storeResetCode(user.id, codigo, expiraEm);
 
-    await enviarEmailCodigo({
+    const emailResult = await enviarEmailCodigo({
         destino: email,
         assunto: 'RECUPERACAO DE SENHA - STARCORE',
         titulo: 'RECUPERACAO DE ACESSO',
@@ -214,10 +261,9 @@ app.post('/api/auth/esqueci-senha', async (req, res) => {
         codigo
     });
 
-    return res.send({
-        mensagem: 'SE_O_EMAIL_EXISTIR_UM_CODIGO_SERA_ENVIADO',
-        ...getDevCodePayload(codigo)
-    });
+    return res.send(
+        buildDeliveryResponse(codigo, emailResult, 'SE_O_EMAIL_EXISTIR_UM_CODIGO_SERA_ENVIADO')
+    );
 });
 
 app.post('/api/auth/redefinir-senha', async (req, res) => {
