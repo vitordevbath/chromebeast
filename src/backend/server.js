@@ -12,6 +12,7 @@ const HOST = process.env.HOST || '0.0.0.0';
 const LIMITE_TENTATIVAS_LOGIN = 5;
 const JANELA_BLOQUEIO_MINUTOS = 15;
 const CODIGO_EXPIRA_MINUTOS = 15;
+const EMAIL_TIMEOUT_MS = 12000;
 
 app.use(cors());
 app.use(express.json());
@@ -99,20 +100,25 @@ async function enviarEmailCodigo({ destino, assunto, titulo, descricao, codigo }
     }
 
     try {
-        await transporter.sendMail({
-            from: process.env.SMTP_FROM || '"STARCORE SENTINEL" <noreply@batenterprise.com>',
-            to: destino,
-            subject: assunto,
-            text: `${descricao} Codigo: ${codigo}`,
-            html: `
-                <div style="background:#000;color:#bc13fe;padding:24px;font-family:monospace;">
-                    <h1 style="margin:0 0 12px;">${titulo}</h1>
-                    <p style="margin:0 0 18px;">${descricao}</p>
-                    <p style="margin:0;font-size:32px;color:#fff;"><strong>${codigo}</strong></p>
-                    <p style="margin:18px 0 0;color:#999;">Este codigo expira em ${CODIGO_EXPIRA_MINUTOS} minutos.</p>
-                </div>
-            `
-        });
+        await Promise.race([
+            transporter.sendMail({
+                from: process.env.SMTP_FROM || '"STARCORE SENTINEL" <noreply@batenterprise.com>',
+                to: destino,
+                subject: assunto,
+                text: `${descricao} Codigo: ${codigo}`,
+                html: `
+                    <div style="background:#000;color:#bc13fe;padding:24px;font-family:monospace;">
+                        <h1 style="margin:0 0 12px;">${titulo}</h1>
+                        <p style="margin:0 0 18px;">${descricao}</p>
+                        <p style="margin:0;font-size:32px;color:#fff;"><strong>${codigo}</strong></p>
+                        <p style="margin:18px 0 0;color:#999;">Este codigo expira em ${CODIGO_EXPIRA_MINUTOS} minutos.</p>
+                    </div>
+                `
+            }),
+            new Promise((_, reject) => {
+                setTimeout(() => reject(new Error('EMAIL_TIMEOUT')), EMAIL_TIMEOUT_MS);
+            })
+        ]);
 
         return { enviado: true, fallback: false };
     } catch (error) {
