@@ -1,18 +1,63 @@
 (() => {
     const ADMIN_TOKEN_STORAGE_KEY = 'starcore_sentinel_admin_token';
 
-    function resolveBaseApi() {
+    function isRemoteFunctionMode() {
         const { protocol, hostname, port } = window.location;
 
         if (protocol === 'file:') {
-            return 'http://localhost:3000/api';
+            return false;
         }
 
         if (hostname === 'localhost' || hostname === '127.0.0.1') {
-            return port === '3000' ? '/api' : 'http://localhost:3000/api';
+            return port !== '3000';
         }
 
-        return '/.netlify/functions';
+        return true;
+    }
+
+    function buildRemoteUrl(recurso, id) {
+        const idNormalizado = id !== undefined ? encodeURIComponent(id) : '';
+
+        switch (recurso) {
+            case 'auth/registrar':
+                return '/.netlify/functions/auth?action=registrar';
+            case 'auth/verificar':
+                return '/.netlify/functions/auth?action=verificar';
+            case 'auth/login':
+                return '/.netlify/functions/auth?action=login';
+            case 'auth/esqueci-senha':
+                return '/.netlify/functions/auth?action=esqueci-senha';
+            case 'auth/redefinir-senha':
+                return '/.netlify/functions/auth?action=redefinir-senha';
+            case 'contato':
+                return '/.netlify/functions/contact';
+            case 'mensagens':
+                return id !== undefined
+                    ? `/.netlify/functions/messages?id=${idNormalizado}`
+                    : '/.netlify/functions/messages';
+            default:
+                return `/.netlify/functions/${recurso}`;
+        }
+    }
+
+    function buildLocalUrl(recurso, id) {
+        const idNormalizado = id !== undefined ? `/${encodeURIComponent(id)}` : '';
+
+        if (window.location.protocol === 'file:') {
+            return `http://localhost:3000/api/${recurso}${idNormalizado}`;
+        }
+
+        if (window.location.port === '3000') {
+            return `/api/${recurso}${idNormalizado}`;
+        }
+
+        return `http://localhost:3000/api/${recurso}${idNormalizado}`;
+    }
+
+    function resolveUrl(recurso, id) {
+        return isRemoteFunctionMode()
+            ? buildRemoteUrl(recurso, id)
+            : buildLocalUrl(recurso, id);
     }
 
     function getAdminToken() {
@@ -33,9 +78,7 @@
     }
 
     async function requisicao(recurso, opcoes = {}, id) {
-        const idNormalizado = id !== undefined ? `/${encodeURIComponent(id)}` : '';
-        const url = `${resolveBaseApi()}/${recurso}${idNormalizado}`;
-
+        const url = resolveUrl(recurso, id);
         const resposta = await fetch(url, opcoes);
         const texto = await resposta.text();
         const dados = texto ? JSON.parse(texto) : null;

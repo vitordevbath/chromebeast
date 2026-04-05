@@ -1,20 +1,20 @@
 const { neon } = require('@netlify/neon');
 const { drizzle } = require('drizzle-orm/neon-http');
-const { desc, eq } = require('drizzle-orm');
+const { desc, eq, sql } = require('drizzle-orm');
 const { mensagensContato } = require('../../db/schema');
 
 const ADMIN_TOKEN = process.env.ADMIN_TOKEN || 'bat-sentinel-2026';
 
 function createDb() {
-    const sql = neon();
-    return drizzle(sql);
+    const query = neon();
+    return drizzle(query);
 }
 
 function json(statusCode, body) {
     return {
         statusCode,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
+        body: JSON.stringify(body),
     };
 }
 
@@ -22,10 +22,24 @@ function validarAdmin(event) {
     return event.headers?.authorization === ADMIN_TOKEN;
 }
 
+async function ensureSchema(db) {
+    await db.execute(sql`
+        CREATE TABLE IF NOT EXISTS mensagens_contato (
+            id SERIAL PRIMARY KEY,
+            nome TEXT NOT NULL,
+            email TEXT NOT NULL,
+            mensagem TEXT NOT NULL,
+            data_hora TIMESTAMP DEFAULT NOW()
+        )
+    `);
+}
+
 exports.handler = async (event) => {
     const db = createDb();
 
     try {
+        await ensureSchema(db);
+
         if (!validarAdmin(event)) {
             return json(403, { error: 'ACESSO_NEGADO_TOKEN_INVALIDO' });
         }
@@ -40,14 +54,13 @@ exports.handler = async (event) => {
         }
 
         if (event.httpMethod === 'DELETE') {
-            const id = event.path.split('/').pop();
-            const numericId = Number(id);
+            const id = Number(event.queryStringParameters?.id);
 
-            if (!Number.isInteger(numericId)) {
+            if (!Number.isInteger(id)) {
                 return json(400, { error: 'INVALID_SIGNAL_ID' });
             }
 
-            await db.delete(mensagensContato).where(eq(mensagensContato.id, numericId));
+            await db.delete(mensagensContato).where(eq(mensagensContato.id, id));
             return json(200, { message: 'SIGNAL_PURGED' });
         }
 
@@ -56,7 +69,7 @@ exports.handler = async (event) => {
         console.error('Messages Function Error:', error);
         return json(500, {
             error: 'MESSAGE_CORE_FAILURE',
-            details: error.message
+            details: error.message,
         });
     }
 };
