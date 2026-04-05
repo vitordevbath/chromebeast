@@ -27,7 +27,6 @@ body {
     color: #fff;
     font-family: var(--fonte-pixel);
     overflow: hidden;
-    cursor: none;
     image-rendering: pixelated;
     height: 100vh;
     width: 100vw;
@@ -171,31 +170,6 @@ body {
 
 .botao-link-pixel:hover {
     color: #fff;
-}
-
-/* Cursores */
-#cursor-customizado {
-    width: 8px;
-    height: 8px;
-    background: var(--neon-ciber);
-    border-radius: 50%;
-    position: fixed;
-    pointer-events: none;
-    z-index: 9999999;
-    box-shadow: 0 0 10px var(--neon-ciber);
-    transition: transform 0.1s ease;
-}
-
-#cursor-desfoque {
-    width: 40px;
-    height: 40px;
-    border: 1px solid var(--neon-ciber);
-    border-radius: 50%;
-    position: fixed;
-    pointer-events: none;
-    z-index: 9999998;
-    box-shadow: 0 0 15px rgba(188, 19, 254, 0.2);
-    transition: transform 0.15s ease-out, top 0.15s ease-out, left 0.15s ease-out;
 }
 
 /* Splash Container */
